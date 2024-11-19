@@ -36,9 +36,11 @@ export class PaymentService {
     }
 
     async fetchPaymentStatus(paymentId: string, config: any) {
+
         try {
             const response = await axios.request(config);
             const paymentStatus = response.data.status;
+            console.log('Payment details:', paymentStatus);
 
             if (!paymentStatus) {
                 throw new BadRequestException('Payment status not found in response');
@@ -61,8 +63,17 @@ export class PaymentService {
                 });
 
                 if (paymentStatus === 'approved') {
+                    console.log("Payment approved! Updating tickets and creating ticket records...");
+                    console.log("Payment approved! Delegating ticket creation to TicketService...");
+
                     await this.ticketService.handlePaymentApproved(payment.id);
+
+                    await this.logPaymentProcess(payment, 'approved', payment.ticketNumbers);
+                    console.log(`Created ${payment.ticketNumbers.length} ticket records`);
+                    await this.logPaymentProcess(payment, 'approved', payment.ticketNumbers);
+
                 } else if (['cancelled', 'rejected', 'refunded', 'charged_back'].includes(paymentStatus)) {
+                    console.log("Payment cancelled/rejected! Releasing tickets...");
                     await prisma.availableTicket.updateMany({
                         where: {
                             raffleId: payment.raffleId,
@@ -74,15 +85,24 @@ export class PaymentService {
                             reservedUntil: null,
                         }
                     });
+
+                    await this.logPaymentProcess(payment, 'cancelled/rejected', payment.ticketNumbers);
                 }
             });
 
-            return { message: 'Webhook processed successfully', response: response.data };
+            return { message: 'Webhook received and processed successfully', response: response.data };
+
         } catch (error) {
+            console.error('Error processing webhook:', error);
+
             if (error.response) {
+                console.error('Error response status:', error.response.status);
+                console.error('Error response data:', error.response.data);
                 throw new BadRequestException(`Error fetching payment: ${error.response.data.message}`);
+            } else {
+                console.error('Error message:', error.message);
+                throw new BadRequestException('Error fetching payment status');
             }
-            throw new BadRequestException('Error processing payment webhook');
         }
     }
 
