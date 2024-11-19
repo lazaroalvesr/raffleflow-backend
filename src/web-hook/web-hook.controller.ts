@@ -31,8 +31,6 @@ export class WebhookController {
         try {
             const paymentStatus = await this.paymentService.fetchPaymentStatus(paymentId, config);
 
-            const paymentRecord = await this.paymentService.getById(paymentId);
-
             return { message: 'Webhook received and processed successfully', status: paymentStatus };
         } catch (error) {
             console.error('Error processing webhook:', error);
