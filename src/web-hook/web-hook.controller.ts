@@ -11,30 +11,32 @@ export class WebhookController {
     @Public()
     @Post()
     async handleWebhook(@Body() body: any, @Headers() headers: any) {
-        console.log('Received webhook headers:', headers);
-        console.log('Received webhook body:', body);
-
-        const paymentId = body.data?.id;
-
-        if (!paymentId) {
-            throw new BadRequestException('Payment ID not found in webhook body');
-        }
-
-        const config = {
-            method: 'GET',
-            url: `https://api.mercadopago.com/v1/payments/${paymentId}`,
-            headers: {
-                'Authorization': `Bearer ${process.env.MP_ACCESS_TOKEN}`
-            }
-        };
-
         try {
+            const paymentId = body.data?.id;
+
+            if (!paymentId) {
+                throw new BadRequestException('Payment ID not found');
+            }
+
+
+            const config = {
+                method: 'GET',
+                url: `https://api.mercadopago.com/v1/payments/${paymentId}`,
+                headers: {
+                    'Authorization': `Bearer ${process.env.MP_ACCESS_TOKEN}`
+                }
+            };
+
             const paymentStatus = await this.paymentService.fetchPaymentStatus(paymentId, config);
 
-            return { message: 'Webhook received and processed successfully', status: paymentStatus };
+            return {
+                message: 'Webhook processed successfully',
+                status: paymentStatus
+            };
         } catch (error) {
-            console.error('Error processing webhook:', error);
-            throw new BadRequestException('Error processing webhook');
+            console.error('Webhook processing error:', error);
+            throw new BadRequestException('Webhook processing failed');
         }
     }
+
 }

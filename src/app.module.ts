@@ -9,11 +9,12 @@ import { mailerConfig } from './lib/mailer.config';
 import { PaymentModule } from './payment/payment.module';
 import { RaffleModule } from './raffle/raffle.module';
 import { TicketModule } from './ticket/ticket.module';
+import { WebHookModule } from './web-hook/web-hook.module';
 
 @Module({
   imports: [
     MailerModule.forRoot(mailerConfig),
-    PrismaModule, AuthModule, PaymentModule, RaffleModule, TicketModule,
+    PrismaModule, AuthModule, PaymentModule, RaffleModule, TicketModule, WebHookModule,
     ConfigModule.forRoot({
       isGlobal: true
     })],
