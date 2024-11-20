@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  app:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: rifaflow-app
+    ports:
+      - "3001:3001"  # Porta da aplicação
+    working_dir: /app
+    command: sh -c "npx prisma generate && node dist/main"  # Adicionei geração do Prisma
+    environment:
+      - DATABASE_URL=postgresql://alvesr23:lazaro267947@db:5432/sistema_rifas
+      - NODE_ENV=production
+    depends_on:
+      - db
+    networks:
+      - rifaflow-network
+    volumes:
+      - .:/app
+      - /app/node_modules
+
+  db:
+    image: postgres:15-alpine
+    container_name: rifaflow-db
+    environment:
+      - POSTGRES_USER=alvesr23
+      - POSTGRES_PASSWORD=lazaro267947
+      - POSTGRES_DB=sistema_rifas
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - rifaflow-network
+    ports:
+      - "5433:5432"  # Mudei para 5433 no host para evitar conflitos
+
+networks:
+  rifaflow-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
