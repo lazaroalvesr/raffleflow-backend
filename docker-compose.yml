@@ -2,24 +2,30 @@ version: '3.8'
 
 services:
   app:
-    build: 
+    build:
       context: .
       dockerfile: Dockerfile
     container_name: rifaflow-app
     ports:
-      - "3001:3001"  # Porta da aplicação
+      - "3001:3001"
     working_dir: /app
-    command: sh -c "npx prisma generate && node dist/main"  # Adicionei geração do Prisma
+    command: sh -c "npx prisma migrate deploy && node dist/main"
     environment:
       - DATABASE_URL=postgresql://alvesr23:lazaro267947@db:5432/sistema_rifas
+      - JWT_SECRET=ffce94f756cf94e2a6917dc580cef34d
+      - SECRET=e948f510d45f5d331e460aacd9710c0c
+      - MP_ACCESS_TOKEN=APP_USR-6907904683264177-101819-e53f62d897b098d5b4b1676cc6a66168-348169037
+      - NOTIFICATION_URL=https://raffle-master-back.vercel.app/notification
+      - SUPABASE_URL=https://bphfomkcuagkugfneovz.supabase.co
+      - SUPABASE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJwaGZvbWtjdWFna3VnZm5lb3Z6Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczMTY4OTc4NSwiZXhwIjoyMDQ3MjY1Nzg1fQ.nb1flMhr5aG_sLZvU5_ScJmJ1HULv5OtDieefLYLKLk
       - NODE_ENV=production
     depends_on:
       - db
     networks:
       - rifaflow-network
     volumes:
-      - .:/app
-      - /app/node_modules
+      - ./:/app
+      - node_modules:/app/node_modules
 
   db:
     image: postgres:15-alpine
@@ -33,7 +39,7 @@ services:
     networks:
       - rifaflow-network
     ports:
-      - "5433:5432"  # Mudei para 5433 no host para evitar conflitos
+      - "5432:5432"
 
 networks:
   rifaflow-network:
@@ -41,3 +47,4 @@ networks:
 
 volumes:
   postgres_data:
+  node_modules:
