@@ -7,18 +7,13 @@ services:
       dockerfile: Dockerfile
     container_name: rifaflow-app
     ports:
-      - "3001:3001"
+      - "3018:3018"
     working_dir: /app
     command: sh -c "npx prisma migrate deploy && node dist/main"
     environment:
-      - DATABASE_URL=postgresql://alvesr23:lazaro267947@db:5432/sistema_rifas
-      - JWT_SECRET=ffce94f756cf94e2a6917dc580cef34d
-      - SECRET=e948f510d45f5d331e460aacd9710c0c
-      - MP_ACCESS_TOKEN=APP_USR-6907904683264177-101819-e53f62d897b098d5b4b1676cc6a66168-348169037
-      - NOTIFICATION_URL=https://raffle-master-back.vercel.app/notification
-      - SUPABASE_URL=https://bphfomkcuagkugfneovz.supabase.co
-      - SUPABASE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJwaGZvbWtjdWFna3VnZm5lb3Z6Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczMTY4OTc4NSwiZXhwIjoyMDQ3MjY1Nzg1fQ.nb1flMhr5aG_sLZvU5_ScJmJ1HULv5OtDieefLYLKLk
       - NODE_ENV=production
+    env_file:
+      - .env
     depends_on:
       - db
     networks:
