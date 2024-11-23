@@ -19,7 +19,7 @@ export class CsrfMiddleware implements NestMiddleware {
     this.csrfProtection = csrf({
       cookie: {
         httpOnly: false,  // O cookie pode ser acessado pelo JavaScript (para enviar o token CSRF)
-        secure: process.env.NODE_ENV === 'production', // Só envia cookies em HTTPS em produção
+        secure: true, // Só envia cookies em HTTPS em produção
         sameSite: 'none',  // Permite o envio de cookies em requisições cross-origin
         domain: '.tecnewsbr.com.br',  // O domínio que pode acessar o cookie
       },
@@ -66,7 +66,7 @@ export class CsrfMiddleware implements NestMiddleware {
         if (!req.cookies['XSRF-TOKEN']) {
           res.cookie('XSRF-TOKEN', req.csrfToken(), {
             httpOnly: false,  // O cookie pode ser acessado pelo JavaScript no frontend
-            secure: process.env.NODE_ENV === 'production',  // Só envia cookies em HTTPS em produção
+            secure: true,  // Só envia cookies em HTTPS em produção
             sameSite: 'none',  // Permite o envio de cookies em requisições cross-origin
             domain: '.tecnewsbr.com.br',  // O domínio que pode acessar o cookie
           });
