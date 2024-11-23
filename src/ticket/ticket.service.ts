@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException, Logger, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, BadRequestException, Logger } from '@nestjs/common';
 import { CreateTicketDTO } from '../dto/ticket/CreateTicketDTO';
 import { PrismaService } from '../prisma/prisma.service';
 import { MercadoPagoConfig, Payment } from 'mercadopago';
@@ -101,7 +101,6 @@ export class TicketService {
                 const formattedTickets = selectedTickets.map((num: number) => {
                     return parseInt(num < 10 ? `0${num}` : `${num}`);  
                 });
-                console.log('Generated Ticket Numbers:', formattedTickets);
 
                 return formattedTickets; 
             };
