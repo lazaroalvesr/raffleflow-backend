@@ -14,7 +14,7 @@ async function bootstrap() {
   const reflector = app.get(Reflector);
   app.useGlobalGuards(new JwtAuthGuard(reflector));
   app.enableCors({
-    origin: 'https://tecnewsbr.com.br',
+    origin: 'https://raffle-master-front.vercel.app',
     credentials: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
   });
