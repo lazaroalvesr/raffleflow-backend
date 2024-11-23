@@ -17,10 +17,9 @@ export class CsrfMiddleware implements NestMiddleware {
   constructor() {
     this.csrfProtection = csrf({
       cookie: {
-        httpOnly: false, 
-        secure: process.env.NODE_ENV === 'production',
+        httpOnly: false,
+        secure: true,
         sameSite: 'none',
-        domain: '.tecnewsbr.com.br', 
       },
     });
   }
@@ -58,10 +57,9 @@ export class CsrfMiddleware implements NestMiddleware {
 
         if (!req.cookies['XSRF-TOKEN']) {
           res.cookie('XSRF-TOKEN', req.csrfToken(), {
-            httpOnly: false, 
-            secure: process.env.NODE_ENV === 'production', 
-            sameSite: 'none', 
-            domain: '.tecnewsbr.com.br',
+            httpOnly: false,
+            secure: true,
+            sameSite: 'none',
           });
         }
         next();
