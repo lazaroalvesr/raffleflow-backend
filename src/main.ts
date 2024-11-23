@@ -14,7 +14,7 @@ async function bootstrap() {
   const reflector = app.get(Reflector);
   app.useGlobalGuards(new JwtAuthGuard(reflector));
   app.enableCors({
-    origin: 'http://localhost:3000',
+    origin: 'https://tecnewsbr.com.br',
     credentials: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
   });
