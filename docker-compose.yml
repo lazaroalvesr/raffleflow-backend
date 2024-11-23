@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile
     container_name: rifaflow-app
     ports:
-      - "3022:3022"
+      - "3023:3023"
     working_dir: /app
     command: sh -c "npx prisma migrate deploy && node dist/main"
     environment:
