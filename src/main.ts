@@ -15,13 +15,12 @@ async function bootstrap() {
   app.useGlobalGuards(new JwtAuthGuard(reflector));
 
   app.enableCors({
-    origin: ['https://raffle-master-front.vercel.app'], 
-    credentials: true, 
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS', 
-    allowedHeaders: ['Content-Type', 'Access-Control-Allow-Origin', 'Accept', 'Authorization', 'X-CSRF-Token'],
-    exposedHeaders: ['X-CSRF-Token'], 
+    origin: 'https://raffle-master-front.vercel.app',
+    credentials: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    allowedHeaders: 'Content-Type, Accept, Authorization, X-CSRF-Token',
   });
-  
+
 
 
   app.use(helmet());
