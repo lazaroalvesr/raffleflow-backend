@@ -145,7 +145,7 @@ export class TicketService {
                             transaction_amount: priceTotal,
                             description: raffle.description,
                             payment_method_id: "pix",
-                            notification_url: "https://raffle-master-back.vercel.app/notification",
+                            notification_url: "https://tecnewsbr.com.br/notification",
                             payer: {
                                 email: body.email,
                             },

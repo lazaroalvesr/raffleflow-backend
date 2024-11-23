@@ -34,5 +34,4 @@ RUN npx prisma generate
 
 EXPOSE 3023
 
-# Modificando para usar npm run start:prod
 CMD ["npm", "run", "start:prod"]
