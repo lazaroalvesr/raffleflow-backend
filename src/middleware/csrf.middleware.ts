@@ -18,9 +18,9 @@ export class CsrfMiddleware implements NestMiddleware {
     this.csrfProtection = csrf({
       cookie: {
         httpOnly: false, 
-        secure: process.env.NODE_ENV === 'production', // Apenas em produção
+        secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',
-        domain: '.tecnewsbr.com.br', // Ajuste o domínio aqui
+        domain: '.tecnewsbr.com.br', 
       },
     });
   }
@@ -57,15 +57,13 @@ export class CsrfMiddleware implements NestMiddleware {
         }
 
         if (!req.cookies['XSRF-TOKEN']) {
-          // Gera e envia o CSRF Token no cookie para o frontend
           res.cookie('XSRF-TOKEN', req.csrfToken(), {
             httpOnly: false, 
             secure: process.env.NODE_ENV === 'production', 
             sameSite: 'strict', 
-            domain: '.tecnewsbr.com.br', // Certifique-se de definir o domínio aqui
+            domain: '.tecnewsbr.com.br',
           });
         }
-
         next();
       });
     });

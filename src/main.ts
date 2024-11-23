@@ -13,11 +13,17 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
   const reflector = app.get(Reflector);
   app.useGlobalGuards(new JwtAuthGuard(reflector));
+  
   app.enableCors({
-    origin: 'https://raffle-master-front.vercel.app',
-    credentials: true,
+    origin: [
+      'https://raffle-master-front.vercel.app',  // Frontend no Vercel
+      'http://localhost:3000',                    // Ambiente local
+      'https://tecnewsbr.com.br',                  // Seu domínio de API
+    ],
+    credentials: true,  // Permite que cookies e credenciais sejam enviados
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
   });
+  
 
   app.use(helmet());
 
