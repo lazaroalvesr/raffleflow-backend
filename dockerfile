@@ -21,6 +21,9 @@ RUN apk add --no-cache libstdc++ libgcc
 
 WORKDIR /app
 
+# Copia o arquivo .env se existir
+COPY .env* ./
+
 COPY package*.json ./
 COPY prisma ./prisma
 
@@ -31,4 +34,5 @@ RUN npx prisma generate
 
 EXPOSE 3022
 
+# Modificando para usar npm run start:prod
 CMD ["npm", "run", "start:prod"]
