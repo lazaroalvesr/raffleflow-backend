@@ -31,7 +31,6 @@ export class WebhookController {
 
             return { message: 'Webhook received and processed successfully', status: paymentStatus };
         } catch (error) {
-            console.error('Error processing webhook:', error);
             throw new BadRequestException('Error processing webhook');
         }
     }
