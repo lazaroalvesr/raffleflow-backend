@@ -7,6 +7,7 @@ import { Request, Response, NextFunction } from 'express';
 export class CsrfMiddleware implements NestMiddleware {
   private csrfProtection: any;
 
+  // Definindo rotas públicas que não necessitam de CSRF
   private publicRoutes = [
     { path: '/auth/create', method: 'POST' },
     { path: '/auth/login', method: 'POST' },
@@ -17,14 +18,15 @@ export class CsrfMiddleware implements NestMiddleware {
   constructor() {
     this.csrfProtection = csrf({
       cookie: {
-        httpOnly: false, 
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        domain: '.tecnewsbr.com.br', 
+        httpOnly: false,  // O cookie pode ser acessado pelo JavaScript (para enviar o token CSRF)
+        secure: process.env.NODE_ENV === 'production', // Só envia cookies em HTTPS em produção
+        sameSite: 'none',  // Permite o envio de cookies em requisições cross-origin
+        domain: '.tecnewsbr.com.br',  // O domínio que pode acessar o cookie
       },
     });
   }
 
+  // Verifica se a rota é pública (não precisa de CSRF)
   private isPublicRoute(req: Request): boolean {
     if (
       this.publicRoutes.some(
@@ -43,12 +45,16 @@ export class CsrfMiddleware implements NestMiddleware {
     return false;
   }
 
+  // Middleware CSRF
   use = (req: Request, res: Response, next: NextFunction) => {
+    // Se for uma rota pública, não aplica CSRF
     if (this.isPublicRoute(req)) {
       return next();
     }
 
+    // Parse de cookies
     cookieParser()(req, res, () => {
+      // Aplica a proteção CSRF
       this.csrfProtection(req, res, (err) => {
         if (err) {
           return res.status(403).json({
@@ -56,14 +62,17 @@ export class CsrfMiddleware implements NestMiddleware {
           });
         }
 
+        // Gera e envia o token CSRF se ainda não estiver no cookie
         if (!req.cookies['XSRF-TOKEN']) {
           res.cookie('XSRF-TOKEN', req.csrfToken(), {
-            httpOnly: false, 
-            secure: process.env.NODE_ENV === 'production', 
-            sameSite: 'strict', 
-            domain: '.tecnewsbr.com.br',
+            httpOnly: false,  // O cookie pode ser acessado pelo JavaScript no frontend
+            secure: process.env.NODE_ENV === 'production',  // Só envia cookies em HTTPS em produção
+            sameSite: 'none',  // Permite o envio de cookies em requisições cross-origin
+            domain: '.tecnewsbr.com.br',  // O domínio que pode acessar o cookie
           });
         }
+
+        // Continua a execução do middleware
         next();
       });
     });
