@@ -8,21 +8,11 @@ import { CsrfMiddleware } from './middleware/csrf.middleware';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
-    cors: true
-  });
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   app.useGlobalPipes(new ValidationPipe());
   const reflector = app.get(Reflector);
   app.useGlobalGuards(new JwtAuthGuard(reflector));
-
-  app.enableCors({
-    origin: 'https://raffle-master-front.vercel.app',
-    credentials: true,
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-    allowedHeaders: 'Content-Type, Accept, Authorization, X-CSRF-Token',
-  });
-
 
 
   app.use(helmet());
