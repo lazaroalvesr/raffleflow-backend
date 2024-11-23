@@ -8,7 +8,9 @@ import { CsrfMiddleware } from './middleware/csrf.middleware';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    cors: true
+  });
 
   app.useGlobalPipes(new ValidationPipe());
   const reflector = app.get(Reflector);
