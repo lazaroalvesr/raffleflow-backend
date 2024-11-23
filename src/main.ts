@@ -18,10 +18,10 @@ async function bootstrap() {
     origin: ['https://raffle-master-front.vercel.app'], // Certifique-se de que a origem está correta
     credentials: true, // Permite envio de cookies e autenticação com credenciais
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS', // Métodos HTTP permitidos
-    allowedHeaders: ['Content-Type', 'Accept', 'Authorization', 'X-CSRF-Token'], // Cabeçalhos permitidos
+    allowedHeaders: ['Content-Type', 'Access-Control-Allow-Origin', 'Accept', 'Authorization', 'X-CSRF-Token'],
     exposedHeaders: ['X-CSRF-Token'], // Cabeçalhos que o navegador pode acessar
   });
-  
+
 
   app.use(helmet());
 
