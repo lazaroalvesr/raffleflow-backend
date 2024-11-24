@@ -14,21 +14,6 @@ async function bootstrap() {
   const reflector = app.get(Reflector);
   app.useGlobalGuards(new JwtAuthGuard(reflector));
 
-  app.enableCors({
-    origin: 'https://raffle-master-front.vercel.app',
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    credentials: true,
-    allowedHeaders: [
-      'Authorization',
-      'X-CSRF-Token',
-      'X-Requested-With',
-      'Accept',
-      'Content-Type',
-    ],
-    exposedHeaders: ['X-CSRF-Token'],
-  });
-
-
   app.use(helmet());
 
   app.use(cookieParser());
