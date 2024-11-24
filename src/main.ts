@@ -15,19 +15,19 @@ async function bootstrap() {
   app.useGlobalGuards(new JwtAuthGuard(reflector));
 
   app.enableCors({
-    origin: (origin, callback) => {
-      const allowedOrigins = [
-        'https://raffle-master-front.vercel.app',
-      ];
-
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, origin); // Permitir a origem
-      } else {
-        callback(new Error('Not allowed by CORS')); // Bloquear outras origens
-      }
-    },
-    credentials: true, // Permitir envio de cookies e headers
+    origin: 'https://raffle-master-front.vercel.app',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    credentials: true,
+    allowedHeaders: [
+      'Authorization',
+      'X-CSRF-Token',
+      'X-Requested-With',
+      'Accept',
+      'Content-Type',
+    ],
+    exposedHeaders: ['X-CSRF-Token'],
   });
+
 
   app.use(helmet());
 
@@ -37,7 +37,7 @@ async function bootstrap() {
 
   app.set('trust proxy', 1);
 
-  await app.listen(process.env.PORT || 3025);
+  await app.listen(3025);
 }
 
 bootstrap();
