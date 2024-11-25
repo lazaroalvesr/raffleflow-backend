@@ -1,13 +1,10 @@
 import { Controller, Get, Req } from '@nestjs/common';
-import { Request } from 'express';
 
 @Controller('csrf')
 export class CsrfController {
   @Get('token')
-  getCsrfToken(@Req() request: Request) {
-    return { 
-      token: request.csrfToken(), 
-      success: true 
-    };
+  getCsrfToken(@Req() req): { token: string, success: boolean } { 
+    const token = req.csrfToken(); 
+    return { token, success: true }; 
   }
 }
