@@ -19,7 +19,7 @@ export class CsrfMiddleware implements NestMiddleware {
       cookie: {
         httpOnly: true,
         secure: true,
-        sameSite: 'strict', // Mais seguro
+        sameSite: 'strict', 
       },
     });
   }
@@ -43,11 +43,7 @@ export class CsrfMiddleware implements NestMiddleware {
   }
 
   use = (req: Request, res: Response, next: NextFunction) => {
-    console.log('Request URL:', req.originalUrl);
-  console.log('Request Method:', req.method);
-  console.log('CSRF Token:', req.cookies['XSRF-TOKEN']);
-  console.log('Request Cookies:', req.cookies);
-  
+
     if (this.isPublicRoute(req)) {
       return next();
     }
