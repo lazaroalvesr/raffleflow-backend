@@ -1,23 +1,24 @@
 import { Controller, Get, Req, Res } from '@nestjs/common';
+import { Request, Response } from 'express';
 
 @Controller('csrf')
 export class CsrfController {
   @Get('token')
-  getCsrfToken(@Req() req, @Res() res): void {
-    const token = req.csrfToken();
-
-    res.cookie('XSRF-TOKEN', token, {
-      httpOnly: true,
+  getCsrfToken(@Req() req: Request, @Res() res: Response) {
+    const csrfToken = req.csrfToken();
+    
+    // Define o cookie com o token
+    res.cookie('XSRF-TOKEN', csrfToken, {
+      httpOnly: false,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
-      path: '/'
+      path: '/',
+      maxAge: 24 * 60 * 60 * 1000 // 24 horas
     });
 
-    res.set('X-CSRF-TOKEN', token);
-
-    res.json({
-      token,
-      success: true
+    res.json({ 
+      token: csrfToken,
+      success: true 
     });
   }
 }
