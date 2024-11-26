@@ -7,14 +7,13 @@ export class CsrfController {
     const token = req.csrfToken();
 
     res.cookie('XSRF-TOKEN', token, {
-      httpOnly: true,
+      httpOnly: false, // Importante para JS acessar
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
       path: '/'
     });
 
     res.set('X-CSRF-TOKEN', token);
-
     res.json({
       token,
       success: true

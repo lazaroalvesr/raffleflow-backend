@@ -14,9 +14,8 @@ async function bootstrap() {
   const reflector = app.get(Reflector);
   app.useGlobalGuards(new JwtAuthGuard(reflector));
 
-  app.use(helmet());
-
   app.use(cookieParser());
+  app.use(helmet());
 
 
   app.use(new CsrfMiddleware().use);
