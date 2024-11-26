@@ -44,15 +44,14 @@ export class CsrfMiddleware implements NestMiddleware {
   }
 
   use = (req: Request, res: Response, next: NextFunction) => {
-    // Log for debugging
-    console.log(`CSRF Middleware - Route: ${req.originalUrl}, Method: ${req.method}`);
-
-    if (this.isPublicRoute(req)) {
-      console.log('Public route, skipping CSRF protection');
-      return next();
-    }
-
+    // Primeiro, aplique o cookie-parser
     cookieParser()(req, res, () => {
+      // Verifique se é uma rota pública
+      if (this.isPublicRoute(req)) {
+        return next();
+      }
+
+      // Aplique a proteção CSRF
       this.csrfProtection(req, res, (err) => {
         if (err) {
           console.error('CSRF Error:', err);
@@ -62,27 +61,34 @@ export class CsrfMiddleware implements NestMiddleware {
           });
         }
 
-        // Always generate a new token for protected routes
-        const csrfToken = req.csrfToken();
+        // Gere um novo token
+        try {
+          const csrfToken = req.csrfToken ? req.csrfToken() : null;
 
-        // Log the generated token
-        console.log('Generated CSRF Token:', csrfToken);
+          if (csrfToken) {
+            // Defina o cookie XSRF-TOKEN se não existir
+            if (!req.cookies['XSRF-TOKEN']) {
+              res.cookie('XSRF-TOKEN', csrfToken, {
+                httpOnly: true,
+                secure: true,
+                sameSite: 'strict',
+                path: '/',
+                maxAge: 24 * 60 * 60 * 1000, // 24 horas
+              });
+            }
 
-        // Set the cookie with a more specific path
-        if (!req.cookies['XSRF-TOKEN']) {
-          res.cookie('XSRF-TOKEN', csrfToken, {
-            httpOnly: true,
-            secure: true,
-            sameSite: 'strict',
-            path: '/', // Important: set for the entire domain
-            maxAge: 24 * 60 * 60 * 1000, // 24 hours validity
+            // Adicione o token aos cabeçalhos da resposta
+            res.set('X-CSRF-TOKEN', csrfToken);
+          }
+
+          next();
+        } catch (tokenError) {
+          console.error('Token Generation Error:', tokenError);
+          return res.status(500).json({
+            message: 'Error generating CSRF token',
+            details: tokenError.message,
           });
         }
-
-        // Add the token to response headers for easy access on the front-end
-        res.set('X-CSRF-TOKEN', csrfToken);
-
-        next();
       });
     });
   };
