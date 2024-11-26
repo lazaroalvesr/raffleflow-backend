@@ -21,14 +21,6 @@ async function bootstrap() {
 
   app.use(new CsrfMiddleware().use);
 
-  app.use((req: any, res: any, next: any) => {
-    const token = req.csrfToken();
-    res.cookie('XSRF-TOKEN', token);
-    res.locals.csrfToken = token;
-
-    next();
-  });
-  
   app.set('trust proxy', 1);
 
   await app.listen(3025);
