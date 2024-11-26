@@ -5,7 +5,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import helmet from 'helmet';
 import * as cookieParser from 'cookie-parser';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
-import * as csrf from 'csurf';
+import * as csurf from 'csurf';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -17,14 +17,17 @@ async function bootstrap() {
   app.use(cookieParser());
   app.use(helmet());
 
-  app.use(csrf({
-    cookie: {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict'
-    },
-    value: (req) => req.headers['x-csrf-token'] || req.cookies['XSRF-TOKEN']
-  }));
+  app.use(
+    csurf({
+      cookie: {
+        httpOnly: true,
+        sameSite: 'strict',
+        secure: process.env.NODE_ENV === 'production',
+      },
+      value: (req) => req.cookies['XSRF-TOKEN'],
+    })
+  );
+
   app.set('trust proxy', 1);
 
   await app.listen(3025);
