@@ -7,7 +7,7 @@ export class CsrfController {
     const token = req.csrfToken();
 
     res.cookie('XSRF-TOKEN', token, {
-      httpOnly: false,
+      httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
       path: '/'
