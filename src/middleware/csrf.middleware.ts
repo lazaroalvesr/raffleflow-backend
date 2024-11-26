@@ -12,7 +12,6 @@ export class CsrfMiddleware implements NestMiddleware {
   private publicRoutes: string[];
 
   constructor() {
-    // Carregue rotas públicas do .env ou mantenha configuração atual
     this.publicRoutes = process.env.PUBLIC_ROUTES 
       ? process.env.PUBLIC_ROUTES.split(',') 
       : [
