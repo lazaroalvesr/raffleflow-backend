@@ -13,6 +13,7 @@ import { WebHookModule } from './web-hook/web-hook.module';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { CsrfModule } from './csrf/csrf.module';
 import { CsrfMiddleware } from './middleware/csrf.middleware';
+import { CsrfController } from './csrf/csrf.controller';
 
 @Module({
   imports: [
@@ -45,7 +46,7 @@ import { CsrfMiddleware } from './middleware/csrf.middleware';
       isGlobal: true
     })
   ],
-  controllers: [],
+  controllers: [CsrfController],
   providers: [{
     provide: APP_GUARD,
     useClass: JwtAuthGuard
