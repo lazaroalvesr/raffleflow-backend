@@ -16,16 +16,16 @@ export class CsrfMiddleware implements NestMiddleware {
    ];
 
    constructor() {
-     this.csrfProtection = csrf({
-       cookie: {
-         httpOnly: true,
-         secure: true,
-         sameSite: 'strict',
-       },
-       // Adiciona estas configurações para mais flexibilidade
-       value: (req) => req.headers['x-csrf-token'] || req.cookies['XSRF-TOKEN']
-     });
-   }
+    this.csrfProtection = csrf({
+      cookie: {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'strict',
+      },
+      // Configuração importante para aceitar token via header
+      value: (req) => req.headers['x-csrf-token'] || req.cookies['XSRF-TOKEN']
+    });
+  }
 
    private isPublicRoute(req: Request): boolean {
      if (
