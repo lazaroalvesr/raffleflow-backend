@@ -9,7 +9,7 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe());
   const reflector = app.get(Reflector);
-  app.useGlobalGuards(new JwtAuthGuard(reflector));
+  app.useGlobalGuards(new JwtAuthGuard(reflector))
 
   await app.listen(3025);
 }
