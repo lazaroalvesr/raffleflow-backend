@@ -11,8 +11,6 @@ import { RaffleModule } from './raffle/raffle.module';
 import { TicketModule } from './ticket/ticket.module';
 import { WebHookModule } from './web-hook/web-hook.module';
 import { ThrottlerModule } from '@nestjs/throttler';
-import { CsrfModule } from './csrf/csrf.module';
-import { CsrfMiddleware } from './middleware/csrf.middleware';
 
 @Module({
   imports: [
@@ -40,7 +38,6 @@ import { CsrfMiddleware } from './middleware/csrf.middleware';
     RaffleModule,
     TicketModule,
     WebHookModule,
-    CsrfModule,
     ConfigModule.forRoot({
       isGlobal: true
     })
@@ -52,16 +49,4 @@ import { CsrfMiddleware } from './middleware/csrf.middleware';
   }],
 })
 
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(CsrfMiddleware) 
-      .exclude(
-        { path: '/auth/create', method: RequestMethod.POST }, 
-        { path: '/auth/login', method: RequestMethod.POST },
-        { path: '/raffle/getAll', method: RequestMethod.GET }, 
-        { path: '/raffle/getById', method: RequestMethod.GET } 
-      )
-      .forRoutes('*'); 
-  }
-}
+export class AppModule {}

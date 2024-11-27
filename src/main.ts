@@ -5,7 +5,6 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import helmet from 'helmet';
 import * as cookieParser from 'cookie-parser';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
-import { CsrfController } from './csrf/csrf.controller';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -16,8 +15,6 @@ async function bootstrap() {
 
   app.use(cookieParser());
   app.use(helmet());
-
-  app.use('/csrf/token', CsrfController);
 
   app.set('trust proxy', 1);
 
