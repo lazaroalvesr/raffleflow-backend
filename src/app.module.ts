@@ -1,4 +1,4 @@
-import {  Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
@@ -31,4 +31,4 @@ import { WebHookModule } from './web-hook/web-hook.module';
   }],
 })
 
-export class AppModule {}
+export class AppModule { }
