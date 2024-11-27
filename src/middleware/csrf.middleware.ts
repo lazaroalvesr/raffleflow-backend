@@ -1,9 +1,7 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 import * as csrf from 'csurf';
-import * as dotenv from 'dotenv';
-
-dotenv.config();
+import * as cookieParser from 'cookie-parser'; // Import cookie-parser
 
 @Injectable()
 export class CsrfMiddleware implements NestMiddleware {
@@ -35,6 +33,9 @@ export class CsrfMiddleware implements NestMiddleware {
   }
 
   use(req: Request, res: Response, next: NextFunction) {
+    // Certifique-se de que o cookie-parser está sendo usado antes de csrf
+    cookieParser()(req, res, () => {});
+
     // Rotas públicas ignoram CSRF
     if (this.isPublicRoute(req.path)) {
       return next();
