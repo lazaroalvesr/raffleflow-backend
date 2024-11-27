@@ -1,7 +1,6 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 import csrf from 'csrf'; // Note: This is different from csurf
-import * as cookieParser from 'cookie-parser';
 
 @Injectable()
 export class CsrfMiddleware implements NestMiddleware {
@@ -45,8 +44,6 @@ export class CsrfMiddleware implements NestMiddleware {
   }
 
   use(req: Request, res: Response, next: NextFunction) {
-    cookieParser()(req, res, () => { });
-
     if (this.isPublicRoute(req.path)) {
       return next();
     }
