@@ -2,8 +2,6 @@ import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import helmet from 'helmet';
-import * as cookieParser from 'cookie-parser';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 
 async function bootstrap() {
@@ -13,8 +11,6 @@ async function bootstrap() {
   const reflector = app.get(Reflector);
   app.useGlobalGuards(new JwtAuthGuard(reflector));
 
-  app.use(cookieParser());
-  app.use(helmet());
 
   app.set('trust proxy', 1);
 
