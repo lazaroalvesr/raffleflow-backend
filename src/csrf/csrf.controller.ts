@@ -1,36 +1,32 @@
-import { Controller, Get, Res, Req, Post, Body, HttpException, HttpStatus } from '@nestjs/common';
-import { Response, Request } from 'express';
-import CSRF from 'csrf';
-
-const csrf = new CSRF();
+import { Controller, Get, Res } from '@nestjs/common';
+import { Response } from 'express';
+import csrf from 'csrf';
 
 @Controller('csrf')
 export class CsrfController {
-  private secret: string;
+  private csrfTokens: csrf;
 
   constructor() {
-    // Gera um segredo na inicialização
-    this.secret = csrf.secretSync();
+    this.csrfTokens = new csrf();
   }
 
   @Get('token')
   getCsrfToken(@Res() res: Response) {
-    // Gera o token CSRF usando o segredo
-    const token = csrf.create(this.secret);
+    const secret = this.csrfTokens.secretSync();
+    const token = this.csrfTokens.create(secret);
 
-    // Retorna o token para o cliente (ex.: via cookie ou cabeçalho)
+    res.cookie('XSRF-SECRET', secret, {
+      httpOnly: false,
+      sameSite: 'strict',
+      secure: process.env.NODE_ENV === 'production',
+    });
+
+    res.cookie('XSRF-TOKEN', token, {
+      httpOnly: false,
+      sameSite: 'strict',
+      secure: process.env.NODE_ENV === 'production',
+    });
+
     res.json({ csrfToken: token });
-  }
-
-  @Post('validate')
-  validateCsrfToken(@Req() req: Request, @Body('csrfToken') csrfToken: string) {
-    // Verifica o token CSRF
-    const isValid = csrf.verify(this.secret, csrfToken);
-
-    if (!isValid) {
-      throw new HttpException('Invalid CSRF token', HttpStatus.FORBIDDEN);
-    }
-
-    return { message: 'CSRF token is valid!' };
   }
 }
