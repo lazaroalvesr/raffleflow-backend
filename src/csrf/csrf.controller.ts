@@ -4,15 +4,17 @@ import { Controller, Get, Req, Res } from '@nestjs/common';
 export class CsrfController {
   @Get('token')
   getCsrfToken(@Req() req, @Res() res) {
-    // Gera e retorna o token
+    // Gera e retorna o token CSRF
     const csrfToken = req.csrfToken();
     
-    // Opcional: define cookie com o token
+    // Define o cookie com o token CSRF
     res.cookie('XSRF-TOKEN', csrfToken, {
-      httpOnly: false, // Acessível por JS
-      sameSite: 'strict'
+      httpOnly: false, // Acessível por JavaScript no frontend
+      sameSite: 'strict', 
+      secure: process.env.NODE_ENV === 'production', // Só ativa o `secure` em produção
     });
 
+    // Retorna o token CSRF no corpo da resposta
     res.json({ csrfToken });
   }
 }
