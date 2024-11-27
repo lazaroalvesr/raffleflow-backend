@@ -11,9 +11,6 @@ async function bootstrap() {
   const reflector = app.get(Reflector);
   app.useGlobalGuards(new JwtAuthGuard(reflector));
 
-
-  app.set('trust proxy', 1);
-
   await app.listen(3025);
 }
 
