@@ -1,82 +1,83 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
-import * as csrf from 'csurf';
-import * as cookieParser from 'cookie-parser'; // Import cookie-parser
+import csrf from 'csrf'; // Note: This is different from csurf
+import * as cookieParser from 'cookie-parser';
 
 @Injectable()
 export class CsrfMiddleware implements NestMiddleware {
   private csrfProtection: any;
   private publicRoutes: string[];
+  private csrfTokens: csrf;
 
   constructor() {
+    this.csrfTokens = new csrf();
     this.publicRoutes = process.env.PUBLIC_ROUTES
       ? process.env.PUBLIC_ROUTES.split(',')
       : [
-          '/auth/create',
-          '/auth/login',
-          '/raffle/getAll',
-          '/raffle/getById',
-        ];
+        '/auth/create',
+        '/auth/login',
+        '/raffle/getAll',
+        '/raffle/getById',
+      ];
 
-    this.csrfProtection = csrf({
-      cookie: {
-        httpOnly: true,
+    this.csrfProtection = (req: Request, res: Response, next: NextFunction) => {
+      const secret = req.cookies['XSRF-SECRET'] || this.csrfTokens.secretSync();
+      res.cookie('XSRF-SECRET', secret, {
+        httpOnly: false,
         sameSite: 'strict',
         secure: process.env.NODE_ENV === 'production',
-        maxAge: 3600000, // Token válido por 1 hora
-      },
-      value: (req) =>
-        req.headers['x-csrf-token'] ||
-        req.cookies['XSRF-TOKEN'] ||
-        req.body['_csrf'],
-    });
-  }
+      });
 
-  use(req: Request, res: Response, next: NextFunction) {
-    // Certifique-se de que o cookie-parser está sendo usado antes de csrf
-    cookieParser()(req, res, () => {});
+      const token = req.headers['x-csrf-token']
+        || req.cookies['XSRF-TOKEN']
+        || req.body['_csrf'];
 
-    // Rotas públicas ignoram CSRF
-    if (this.isPublicRoute(req.path)) {
-      return next();
-    }
-
-    // Método para gerar token em rotas específicas
-    if (req.path === '/csrf-token') {
-      return this.generateCsrfToken(req, res);
-    }
-
-    // Proteção CSRF para rotas protegidas
-    this.csrfProtection(req, res, (err) => {
-      if (err) {
-        console.error('CSRF Error:', err);
+      if (!token || !this.csrfTokens.verify(secret, token)) {
         return res.status(403).json({
           statusCode: 403,
           message: 'CSRF token inválido',
           error: 'Forbidden',
         });
       }
+
       next();
-    });
+    };
   }
 
-  // Verifica se a rota é pública
+  use(req: Request, res: Response, next: NextFunction) {
+    cookieParser()(req, res, () => { });
+
+    if (this.isPublicRoute(req.path)) {
+      return next();
+    }
+
+    if (req.path === '/csrf-token') {
+      return this.generateCsrfToken(req, res);
+    }
+
+    this.csrfProtection(req, res, next);
+  }
+
   private isPublicRoute(path: string): boolean {
     return this.publicRoutes.some((route) => path.startsWith(route));
   }
 
-  // Gera token CSRF sob demanda
   private generateCsrfToken(req: Request, res: Response) {
-    // O token CSRF estará disponível após a execução do middleware
-    const csrfToken = req.csrfToken();
-    
-    // Define cookie com token para frontend
-    res.cookie('XSRF-TOKEN', csrfToken, {
-      httpOnly: false, // Acessível por JS
+    const secret = req.cookies['XSRF-SECRET'] || this.csrfTokens.secretSync();
+    const token = this.csrfTokens.create(secret);
+
+    res.cookie('XSRF-SECRET', secret, {
+      httpOnly: false,
       sameSite: 'strict',
       secure: process.env.NODE_ENV === 'production',
     });
 
-    res.json({ csrfToken });
+    res.cookie('XSRF-TOKEN', token, {
+      httpOnly: false,
+      sameSite: 'strict',
+      secure: process.env.NODE_ENV === 'production',
+    });
+
+    res.json({ csrfToken: token });
   }
 }
