@@ -39,13 +39,14 @@ export class RaffleController {
     async getInfoPaymentRaffle(@Param("id") id: string) {
         return await this.raffleService.getInfoPaymentRaffle(id)
     }
-
+    
     @Post("winner/:raffleId")
     @UseGuards(AdminGuard)
-    async drawWinner(@Param("id") raffleId: string) {
+    async drawWinner(@Param("raffleId") raffleId: string) {
         const winnerTicket = await this.raffleService.drawWinner(raffleId);
         return { message: 'Winner drawn successfully', winnerTicket };
     }
+    
     
     @Patch("update/:id")
     @UseInterceptors(FileInterceptor('image')) 
