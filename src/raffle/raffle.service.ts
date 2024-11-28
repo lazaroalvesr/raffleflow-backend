@@ -174,27 +174,55 @@ export class RaffleService {
     async drawWinner(raffleId: string) {
         const raffle = await this.prismaService.raffle.findUnique({
             where: { id: raffleId },
-            include: { tickets: true },
+            include: { 
+                AvailableTicket: {
+                    where: { isPurchased: true },
+                }
+            },
         });
-
+    
         if (!raffle) {
-            throw new NotFoundException('Raffle not found.');
+            throw new NotFoundException('Sorteio não encontrado.');
         }
-
-        if (raffle.tickets.length === 0) {
-            throw new BadRequestException('No tickets available for this raffle.');
+    
+        if (raffle.AvailableTicket.length === 0) {
+            throw new BadRequestException('Não há bilhetes disponíveis para este sorteio.');
         }
-
-        const winnerIndex = Math.floor(Math.random() * raffle.tickets.length);
-        const winnerTicket = raffle.tickets[winnerIndex];
-
+    
+        const purchasedTickets = raffle.AvailableTicket.filter(ticket => ticket.isPurchased);
+    
+        if (purchasedTickets.length === 0) {
+            throw new BadRequestException('Nenhum bilhete comprado para este sorteio.');
+        }
+    
+        const winnerIndex = Math.floor(Math.random() * purchasedTickets.length);
+        const winnerTicket = purchasedTickets[winnerIndex];
+    
+        const winnerUser = await this.prismaService.user.findUnique({
+            where: { id: winnerTicket.id },  
+        });
+    
+        if (!winnerUser) {
+            throw new NotFoundException('Usuário não encontrado.');
+        }
+    
         await this.prismaService.raffle.update({
             where: { id: raffleId },
             data: { winnerTicketId: winnerTicket.id },
         });
-
-        return winnerTicket;
+    
+        await this.prismaService.availableTicket.update({
+            where: { id: winnerTicket.id },
+            data: { isPurchased: true },
+        });
+    
+        return {
+            winnerTicket,
+            user: winnerUser,  
+        };
     }
+    
+    
 
     async updateRaffle(id: string, image: Express.Multer.File, updateRaffle: {
         name?: string,
