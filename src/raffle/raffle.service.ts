@@ -222,8 +222,6 @@ export class RaffleService {
         };
     }
     
-    
-
     async updateRaffle(id: string, image: Express.Multer.File, updateRaffle: {
         name?: string,
         description?: string,

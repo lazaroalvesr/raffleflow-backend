@@ -40,7 +40,8 @@ export class RaffleController {
         return await this.raffleService.getInfoPaymentRaffle(id)
     }
 
-    @Post("draw-winner/:id")
+    @Post("winner/:id")
+    @UseGuards(AdminGuard)
     async drawWinner(@Param("id") raffleId: string) {
         const winnerTicket = await this.raffleService.drawWinner(raffleId);
         return { message: 'Winner drawn successfully', winnerTicket };
