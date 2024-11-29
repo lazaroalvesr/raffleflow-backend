@@ -31,6 +31,6 @@ COPY --from=builder /app/node_modules ./node_modules
 
 RUN npx prisma generate
 
-EXPOSE 3027
+EXPOSE 3026
 
 CMD ["npm", "run", "start:prod"]
