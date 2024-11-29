@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, UseGuards, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards, ValidationPipe } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginAdminDTO } from '../dto/auth/LoginAdminDTO';
 import { RegisterDTO } from '../dto/auth/RegisterDto';
@@ -6,6 +6,7 @@ import { Public } from '../lib/public.decorator';
 import { ChangePasswordDto } from '../dto/auth/ChangePasswordDto';
 import { UpdateProfileDTO } from '../dto/auth/UpdateProfileDTO';
 import { JwtAuthGuard } from './jwt-auth.guard';
+import { AdminGuard } from 'src/lib/AdmGuard';
 
 @Controller('auth')
 export class AuthController {
@@ -61,5 +62,15 @@ export class AuthController {
         return await this.authService.updateUser(id, updateUser)
     }
 
+    @Get("viewUserInSystem")
+    @UseGuards(AdminGuard)
+    async viewUsers() {
+        return await this.authService.viewUsersInSystem()
+    }
 
+    @Delete("delete/:id")
+    @UseGuards(JwtAuthGuard)
+    async deleteUser(@Param("id") id: string) {
+        return await this.authService.deleteUser(id)
+    }
 }

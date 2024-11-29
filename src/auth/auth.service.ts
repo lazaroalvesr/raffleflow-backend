@@ -19,7 +19,7 @@ export class AuthService {
     ) { }
 
     private formatTelephone(telephone: string): string {
-        return telephone.replace(/\D/g, ''); 
+        return telephone.replace(/\D/g, '');
     }
 
     async login({ email, password }: LoginAdminDTO) {
@@ -60,7 +60,7 @@ export class AuthService {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const confirmationToken = uuidv4();
-        const formattedTelephone = this.formatTelephone(telephone); 
+        const formattedTelephone = this.formatTelephone(telephone);
 
         const user = await this.prismaService.user.create({
             data: {
@@ -227,6 +227,18 @@ export class AuthService {
         });
 
         return { message: "Password updated successfully" };
+    }
+
+    async viewUsersInSystem() {
+        await this.prismaService.user.findMany()
+    }
+
+    async deleteUser(id: string) {
+        await this.prismaService.user.delete({
+            where: { id }
+        })
+
+        return { message: "Usuário deletado com sucesso!" }
     }
 
 }

@@ -21,7 +21,6 @@ RUN apk add --no-cache libstdc++ libgcc
 
 WORKDIR /app
 
-# Copia o arquivo .env se existir
 COPY .env* ./
 
 COPY package*.json ./
