@@ -62,10 +62,10 @@ export class AuthController {
         return await this.authService.updateUser(id, updateUser)
     }
 
-    @Get("viewUserInSystem/:id")
+    @Get("users")
     @UseGuards(AdminGuard)
-    async viewUsers(@Param("id") id: string) {
-        return await this.authService.viewUsersInSystem(id)
+    async viewUsers() {
+        return await this.authService.usersAll()
     }
 
     @Delete("delete/:id")

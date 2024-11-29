@@ -229,10 +229,8 @@ export class AuthService {
         return { message: "Password updated successfully" };
     }
 
-    async viewUsersInSystem(id: string) {
-        return await this.prismaService.user.findMany({
-            where: { id }
-        })
+    async usersAll() {
+        return await this.prismaService.user.findMany();
     }
 
     async deleteUser(id: string) {
