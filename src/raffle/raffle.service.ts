@@ -175,7 +175,7 @@ export class RaffleService {
         const raffle = await this.prismaService.raffle.findUnique({
             where: { id: raffleId },
             include: {
-                tickets: true, // Inclui os bilhetes comprados
+                tickets: true, 
             },
         });
     
@@ -189,19 +189,16 @@ export class RaffleService {
             throw new BadRequestException('Nenhum bilhete comprado para este sorteio.');
         }
     
-        // Sortear bilhete vencedor
         const winnerTicket = purchasedTickets[Math.floor(Math.random() * purchasedTickets.length)];
     
-        // Buscar usuário associado ao bilhete
         const winnerUser = await this.prismaService.user.findUnique({
-            where: { id: winnerTicket.userId }, // Utilize o userId do bilhete
+            where: { id: winnerTicket.userId },
         });
     
         if (!winnerUser) {
             throw new NotFoundException('Usuário não encontrado.');
         }
     
-        // Atualizar sorteio com bilhete vencedor
         await this.prismaService.raffle.update({
             where: { id: raffleId },
             data: { winnerTicketId: winnerTicket.id },
