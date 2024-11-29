@@ -42,4 +42,4 @@ networks:
 volumes:
  postgres_data:
  node_modules:
- app_data:
+ app_data: 
