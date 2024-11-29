@@ -25,9 +25,9 @@ services:
    image: postgres:15-alpine
    container_name: rifaflow-db
    environment:
-     - POSTGRES_USER=alvesr23
-     - POSTGRES_PASSWORD=lazaro267947
-     - POSTGRES_DB=sistema_rifas
+    - POSTGRES_USER=${POSTGRES_USER}
+    - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    - POSTGRES_DB=${POSTGRES_DB}
    volumes:
      - postgres_data:/var/lib/postgresql/data
    networks:
