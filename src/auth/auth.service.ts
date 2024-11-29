@@ -230,7 +230,7 @@ export class AuthService {
     }
 
     async viewUsersInSystem() {
-        await this.prismaService.user.findMany()
+        return await this.prismaService.user.findMany()
     }
 
     async deleteUser(id: string) {
