@@ -41,7 +41,6 @@ networks:
     driver: bridge
 
 volumes:
-  postgres_data:
-    driver: local
+  raffle-back_postgres_data:
   node_modules:
   app_data:
