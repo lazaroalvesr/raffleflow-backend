@@ -6,7 +6,7 @@ import { Public } from '../lib/public.decorator';
 import { ChangePasswordDto } from '../dto/auth/ChangePasswordDto';
 import { UpdateProfileDTO } from '../dto/auth/UpdateProfileDTO';
 import { JwtAuthGuard } from './jwt-auth.guard';
-import { AdminGuard } from 'src/lib/AdmGuard';
+import { AdminGuard } from '../lib/AdmGuard';
 
 @Controller('auth')
 export class AuthController {
