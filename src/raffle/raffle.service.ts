@@ -175,32 +175,33 @@ export class RaffleService {
         const raffle = await this.prismaService.raffle.findUnique({
             where: { id: raffleId },
             include: {
-                AvailableTicket: {
-                    where: { isPurchased: true }
-                }
-            }
+                tickets: true, // Inclui os bilhetes comprados
+            },
         });
     
         if (!raffle) {
             throw new NotFoundException('Sorteio não encontrado.');
         }
     
-        const purchasedTickets = raffle.AvailableTicket;
+        const purchasedTickets = raffle.tickets;
     
         if (purchasedTickets.length === 0) {
             throw new BadRequestException('Nenhum bilhete comprado para este sorteio.');
         }
     
+        // Sortear bilhete vencedor
         const winnerTicket = purchasedTickets[Math.floor(Math.random() * purchasedTickets.length)];
     
+        // Buscar usuário associado ao bilhete
         const winnerUser = await this.prismaService.user.findUnique({
-            where: { id: winnerTicket.id }, // Linha corrigida
+            where: { id: winnerTicket.userId }, // Utilize o userId do bilhete
         });
     
         if (!winnerUser) {
             throw new NotFoundException('Usuário não encontrado.');
         }
     
+        // Atualizar sorteio com bilhete vencedor
         await this.prismaService.raffle.update({
             where: { id: raffleId },
             data: { winnerTicketId: winnerTicket.id },
@@ -211,6 +212,7 @@ export class RaffleService {
             user: winnerUser,
         };
     }
+    
     
     async updateRaffle(id: string, image: Express.Multer.File, updateRaffle: {
         name?: string,
