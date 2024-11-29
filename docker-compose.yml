@@ -1,45 +1,45 @@
 version: '3.8'
-
 services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: rifaflow-app
-    ports:
-      - "3026:3026"
-    working_dir: /app
-    command: sh -c "npx prisma migrate deploy && node dist/main"
-    environment:
-      - NODE_ENV=production
-    env_file:
-      - .env
-    depends_on:
-      - db
-    networks:
-      - rifaflow-network
-    volumes:
-      - ./:/app
-      - node_modules:/app/node_modules
-
-  db:
-    image: postgres:15-alpine
-    container_name: rifaflow-db
-    environment:
-      - POSTGRES_USER=alvesr23
-      - POSTGRES_PASSWORD=lazaro267947
-      - POSTGRES_DB=sistema_rifas
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - rifaflow-network
-    ports:
-      - "5432:5432"
+ app:
+   build:
+     context: .
+     dockerfile: Dockerfile
+   container_name: rifaflow-app
+   ports:
+     - "3026:3026"
+   working_dir: /app
+   command: sh -c "npx prisma migrate deploy && node dist/main"
+   environment:
+     - NODE_ENV=production
+   env_file:
+     - .env
+   depends_on:
+     - db
+   networks:
+     - rifaflow-network
+   volumes:
+     - ./:/app
+     - node_modules:/app/node_modules
+     - app_data:/app/dist
+ db:
+   image: postgres:15-alpine
+   container_name: rifaflow-db
+   environment:
+     - POSTGRES_USER=alvesr23
+     - POSTGRES_PASSWORD=lazaro267947
+     - POSTGRES_DB=sistema_rifas
+   volumes:
+     - postgres_data:/var/lib/postgresql/data
+   networks:
+     - rifaflow-network
+   ports:
+     - "5432:5432"
 
 networks:
-  rifaflow-network:
-    driver: bridge
+ rifaflow-network:
+   driver: bridge
 
 volumes:
-  postgres_data:
-  node_modules:
+ postgres_data:
+ node_modules:
+ app_data:
