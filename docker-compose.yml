@@ -30,7 +30,7 @@ services:
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - raffle-back_postgres_data:/var/lib/postgresql/data
     networks:
       - rifaflow-network
     ports:
