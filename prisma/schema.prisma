@@ -19,7 +19,7 @@ model User {
   role              Rule      @default(USER)
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
-  Payment           Payment[]
+  payments          Payment[]
   raffles           Raffle[]
   tickets           Ticket[]
 }
@@ -35,9 +35,9 @@ model Raffle {
   ticketPrice     String
   userId          String
   winnerTicketId  String?
-  AvailableTicket AvailableTicket[]
-  Payment         Payment[]
-  user            User              @relation(fields: [userId], references: [id])
+  availableTickets AvailableTicket[]
+  payments        Payment[]
+  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
   winnerTicket    Ticket?           @relation("RaffleWinner", fields: [winnerTicketId], references: [id])
   tickets         Ticket[]          @relation("RaffleTickets")
 }
@@ -49,20 +49,20 @@ model AvailableTicket {
   isReserved    Boolean   @default(false)
   reservedUntil DateTime?
   isPurchased   Boolean   @default(false)
-  raffle        Raffle    @relation(fields: [raffleId], references: [id])
+  raffle        Raffle    @relation(fields: [raffleId], references: [id], onDelete: Cascade)
 
   @@unique([raffleId, ticketNumber])
 }
 
 model Ticket {
   id       String   @id @default(uuid())
-  number   Int[]
+  numbers  Int[]
   userId   String
   raffleId String
   dateBuy  DateTime @default(now())
-  Raffle   Raffle[] @relation("RaffleWinner")
-  raffle   Raffle   @relation("RaffleTickets", fields: [raffleId], references: [id])
-  user     User     @relation(fields: [userId], references: [id])
+  wonRaffles Raffle[] @relation("RaffleWinner")
+  raffle   Raffle   @relation("RaffleTickets", fields: [raffleId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Payment {
@@ -80,8 +80,8 @@ model Payment {
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
   ticketNumbers Int[]
-  raffle        Raffle        @relation(fields: [raffleId], references: [id])
-  user          User          @relation(fields: [userId], references: [id])
+  raffle        Raffle        @relation(fields: [raffleId], references: [id], onDelete: Cascade)
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, raffleId])
   @@index([transactionId])
@@ -95,6 +95,6 @@ enum Rule {
 enum PaymentStatus {
   pending
   approved
-  rejectd
+  rejected
   cancelled
 }
