@@ -230,7 +230,16 @@ export class AuthService {
     }
 
     async usersAll() {
-        return await this.prismaService.user.findMany();
+        const users = await this.prismaService.user.findMany({
+            select: {
+                name: true,
+                surname: true,
+                email: true,
+                telephone: true,
+            },
+        });
+
+        return users; 
     }
 
     async deleteUser(id: string) {
