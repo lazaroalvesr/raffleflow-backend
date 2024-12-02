@@ -228,20 +228,11 @@ export class AuthService {
 
         return { message: "Password updated successfully" };
     }
-
+    
     async usersAll() {
-        const users = await this.prismaService.user.findMany({
-            select: {
-                name: true,
-                surname: true,
-                email: true,
-                telephone: true,
-                password: false,
-                confirmationToken: false
-            }
-        });
-
-        return users;
+        const users = await this.prismaService.user.findMany();
+    
+        return users.map(({ password, confirmationToken, ...user }) => user);
     }
 
     async deleteUser(id: string) {
