@@ -236,10 +236,12 @@ export class AuthService {
                 surname: true,
                 email: true,
                 telephone: true,
-            },
+                password: false,
+                confirmationToken: false
+            }
         });
 
-        return users; 
+        return users;
     }
 
     async deleteUser(id: string) {
