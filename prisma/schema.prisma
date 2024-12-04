@@ -35,8 +35,8 @@ model Raffle {
   ticketPrice     String
   userId          String
   winnerTicketId  String?
-  availableTickets AvailableTicket[]
-  payments        Payment[]
+  AvailableTicket AvailableTicket[]
+  Payment        Payment[]
   user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
   winnerTicket    Ticket?           @relation("RaffleWinner", fields: [winnerTicketId], references: [id])
   tickets         Ticket[]          @relation("RaffleTickets")
@@ -56,7 +56,7 @@ model AvailableTicket {
 
 model Ticket {
   id       String   @id @default(uuid())
-  numbers  Int[]
+  number  Int[]
   userId   String
   raffleId String
   dateBuy  DateTime @default(now())
