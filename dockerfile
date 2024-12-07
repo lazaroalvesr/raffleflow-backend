@@ -1,54 +1,50 @@
 # Build stage
 FROM node:20-alpine AS builder
 
-# Install dependencies for building native modules (if needed)
-RUN apk add --no-cache python3 build-base
+# Install dependencies for building
+RUN apk add --no-cache python3 build-base postgresql-client
 
 WORKDIR /app
 
-# Copy package.json and prisma folder
-COPY package*.json ./ 
+# Copy dependency files first for better caching
+COPY package*.json ./
 COPY prisma ./prisma
 
 # Install dependencies and generate Prisma client
-RUN npm cache clean --force && \
-    npm install && \
+RUN npm ci && \
     npx prisma generate
 
-# Copy the rest of the application code
+# Copy application code
 COPY . .
 
-# Build the application (compile TypeScript to JavaScript)
+# Build the application
 RUN npm run build
 
 # Production stage
 FROM node:20-alpine
 
-# Install necessary libraries for running Node.js apps in production
-RUN apk add --no-cache libstdc++ libgcc
+# Install runtime dependencies
+RUN apk add --no-cache libstdc++ libgcc postgresql-client
 
 WORKDIR /app
 
-# Copy environment variables
-COPY .env* ./
+# Set default environment
+ENV NODE_ENV=production
 
-# Copy package.json and prisma folder for production
-COPY package*.json ./
-COPY prisma ./prisma
-
-# Copy the built application and node_modules from the builder stage
+# Copy necessary files
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
-
-# Copy the wait-for-db script into the container and make it executable
-COPY wait-for-db.sh ./wait-for-db.sh
+COPY package*.json ./
+COPY prisma ./prisma
+COPY .env* ./
+COPY wait-for-db.sh ./
 RUN chmod +x ./wait-for-db.sh
 
-# Generate Prisma client in the production stage
+# Generate Prisma client
 RUN npx prisma generate
 
-# Expose the port the app will run on
-EXPOSE 3026
+# Expose application port
+EXPOSE ${PORT}
 
-# Start the app in production
-CMD ["npm", "run", "start:prod"]
+# Use wait-for-db script with dynamic host and port
+CMD ["sh", "-c", "./wait-for-db.sh ${DB_HOST} ${DB_PORT} && npm run start:prod"]

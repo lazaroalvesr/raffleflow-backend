@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginAdminDTO } from '../dto/auth/LoginAdminDTO';
 import { RegisterDTO } from '../dto/auth/RegisterDto';
@@ -7,6 +7,7 @@ import { ChangePasswordDto } from '../dto/auth/ChangePasswordDto';
 import { UpdateProfileDTO } from '../dto/auth/UpdateProfileDTO';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { AdminGuard } from '../lib/AdmGuard';
+import { SearchUserDTO } from '../dto/auth/SearchUserDTO';
 
 @Controller('auth')
 export class AuthController {
@@ -62,10 +63,18 @@ export class AuthController {
         return await this.authService.updateUser(id, updateUser)
     }
 
-    @Get("users")
+    // @Get("usersAll")
+    // @UseGuards(AdminGuard)
+    // @UsePipes(new ValidationPipe({ transform: true }))
+    // async usersAll(@Query() filters: SearchUserDTO) {
+    //     return await this.authService.usersAll(filters);
+    // }
+
+    @Get("usersAll")
     @UseGuards(AdminGuard)
-    async viewUsers() {
-        return await this.authService.usersAll()
+    @UsePipes(new ValidationPipe({ transform: true }))
+    async usersAll(@Query() filters: SearchUserDTO) {
+        return this.authService.searchUser(filters);
     }
 
     @Delete("delete/:id")

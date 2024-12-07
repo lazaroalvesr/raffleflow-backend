@@ -8,6 +8,7 @@ import { MailerService } from '@nestjs-modules/mailer';
 import { v4 as uuidv4 } from 'uuid';
 import { ChangePasswordDto } from '../dto/auth/ChangePasswordDto';
 import { UpdateProfileDTO } from '../dto/auth/UpdateProfileDTO';
+import { SearchUserDTO } from '../dto/auth/SearchUserDTO';
 
 @Injectable()
 export class AuthService {
@@ -229,8 +230,40 @@ export class AuthService {
         return { message: "Password updated successfully" };
     }
 
-    async usersAll() {
-        const users = await this.prismaService.user.findMany({
+    // async usersAll(filters?: SearchUserDTO) {
+
+    //     const whereConditions = {
+    //         ...(filters.name && { name: { contains: filters.name, mode: 'insensitive' as 'insensitive' } }),
+    //         ...(filters.email && { email: { contains: filters.email, mode: 'insensitive' as 'insensitive' } }),
+    //         ...(filters.telephone && { telephone: { contains: filters.telephone, mode: 'insensitive' as 'insensitive' } }),
+    //     };
+
+    //     const user = await this.prismaService.user.findMany({
+    //         where: whereConditions,
+    //         select: {
+    //             id: true,
+    //             name: true,
+    //             surname: true,
+    //             email: true,
+    //             telephone: true,
+    //             role: true,
+    //             createdAt: true,
+    //             updatedAt: true
+    //         }
+    //     });
+
+    //     return user;
+    // }
+
+    async searchUser(filters: SearchUserDTO) {
+        const whereConditions = {
+            ...(filters.name && { name: { contains: filters.name, mode: 'insensitive' as 'insensitive' } }),
+            ...(filters.email && { email: { contains: filters.email, mode: 'insensitive' as 'insensitive' } }),
+            ...(filters.telephone && { telephone: { contains: filters.telephone, mode: 'insensitive' as 'insensitive' } }),
+        };
+
+        return this.prismaService.user.findMany({
+            where: whereConditions,
             select: {
                 id: true,
                 name: true,
@@ -243,9 +276,7 @@ export class AuthService {
             }
         });
 
-        return users;
     }
-
 
     async deleteUser(id: string) {
         await this.prismaService.user.delete({

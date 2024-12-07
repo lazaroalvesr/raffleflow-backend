@@ -9,7 +9,7 @@ services:
     ports:
       - "3026:3026"
     working_dir: /app
-    command: sh -c "./wait-for-db.sh && npx prisma migrate deploy && node dist/main" # Wait for DB, then migrate and start app
+    command: sh -c "./wait-for-db.sh && npx prisma migrate deploy && node dist/main" 
     environment:
       - NODE_ENV=production
     env_file:

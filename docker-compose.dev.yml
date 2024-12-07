@@ -5,11 +5,12 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: rifaflow-app-development
+    container_name: rifaflow-dev
     ports:
-      - "3028:3028"
+      - "3030:3030"
+      - "5555:5555" 
     working_dir: /app
-    command: sh -c "npx prisma migrate deploy && node dist/main"
+    command: sh -c "./wait-for-db.sh && npx prisma migrate deploy && node dist/main" 
     env_file:
       - .env.dev
     depends_on:
@@ -24,9 +25,9 @@ services:
     image: postgres:15-alpine
     container_name: rifaflow-db-development
     environment:
-      - POSTGRES_USER=rifa-flow-dev
-      - POSTGRES_PASSWORD=flowrifadev
-      - POSTGRES_DB=rifaflow-development
+      - POSTGRES_USER=flowdev
+      - POSTGRES_PASSWORD=rifaflow23444
+      - POSTGRES_DB=rifaflow-dev
     volumes:
       - raffle-back_postgres_data:/var/lib/postgresql/data
     networks:
