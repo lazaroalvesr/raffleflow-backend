@@ -20,7 +20,7 @@ RUN npm run build
 # Etapa Final
 FROM node:20-alpine
 
-# Instala dependências necessárias para execução (incluindo postgresql-client para o script)
+# Instala dependências necessárias para execução
 RUN apk add --no-cache libstdc++ libgcc postgresql-client
 
 WORKDIR /app
@@ -31,7 +31,7 @@ COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
 COPY package*.json ./ 
 COPY prisma ./prisma
-COPY .env* ./ 
+COPY .env* ./
 COPY wait-for-db.sh ./ 
 
 # Dá permissão de execução ao script
