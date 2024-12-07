@@ -230,31 +230,6 @@ export class AuthService {
         return { message: "Password updated successfully" };
     }
 
-    // async usersAll(filters?: SearchUserDTO) {
-
-    //     const whereConditions = {
-    //         ...(filters.name && { name: { contains: filters.name, mode: 'insensitive' as 'insensitive' } }),
-    //         ...(filters.email && { email: { contains: filters.email, mode: 'insensitive' as 'insensitive' } }),
-    //         ...(filters.telephone && { telephone: { contains: filters.telephone, mode: 'insensitive' as 'insensitive' } }),
-    //     };
-
-    //     const user = await this.prismaService.user.findMany({
-    //         where: whereConditions,
-    //         select: {
-    //             id: true,
-    //             name: true,
-    //             surname: true,
-    //             email: true,
-    //             telephone: true,
-    //             role: true,
-    //             createdAt: true,
-    //             updatedAt: true
-    //         }
-    //     });
-
-    //     return user;
-    // }
-
     async searchUser(filters: SearchUserDTO) {
         const whereConditions = {
             ...(filters.name && { name: { contains: filters.name, mode: 'insensitive' as 'insensitive' } }),
