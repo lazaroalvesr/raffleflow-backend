@@ -39,6 +39,7 @@ RUN chmod +x ./wait-for-db.sh
 
 # Gera os arquivos do Prisma na etapa final
 RUN npx prisma generate
+RUN apk add --no-cache postgresql-client
 
 # Define a porta exposta
 EXPOSE ${PORT}
