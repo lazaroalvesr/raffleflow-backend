@@ -175,42 +175,46 @@ export class RaffleService {
         const raffle = await this.prismaService.raffle.findUnique({
             where: { id: raffleId },
             include: {
-                tickets: true, 
+                tickets: true,
             },
         });
-    
+
         if (!raffle) {
             throw new NotFoundException('Sorteio não encontrado.');
         }
-    
+
         const purchasedTickets = raffle.tickets;
-    
+
         if (purchasedTickets.length === 0) {
             throw new BadRequestException('Nenhum bilhete comprado para este sorteio.');
         }
-    
+
         const winnerTicket = purchasedTickets[Math.floor(Math.random() * purchasedTickets.length)];
-    
+
         const winnerUser = await this.prismaService.user.findUnique({
             where: { id: winnerTicket.userId },
+            select: {
+                name: true,
+                email: true
+            }
         });
-    
+
         if (!winnerUser) {
             throw new NotFoundException('Usuário não encontrado.');
         }
-    
+
         await this.prismaService.raffle.update({
             where: { id: raffleId },
             data: { winnerTicketId: winnerTicket.id },
         });
-    
+
         return {
             winnerTicket,
             user: winnerUser,
         };
     }
-    
-    
+
+
     async updateRaffle(id: string, image: Express.Multer.File, updateRaffle: {
         name?: string,
         description?: string,
@@ -219,7 +223,7 @@ export class RaffleService {
         ticketPrice: string
     }) {
         let imageUrl = undefined;
-    
+
         if (image) {
             try {
                 imageUrl = await this.uploadImage(image);
@@ -228,19 +232,19 @@ export class RaffleService {
                 throw new Error('Image upload failed');
             }
         }
-    
+
         const responseEdit = await this.prismaService.raffle.update({
             where: { id },
             data: {
                 name: updateRaffle.name,
                 description: updateRaffle.description,
                 endDate: updateRaffle.endDate,
-                image: imageUrl, 
+                image: imageUrl,
                 quantityNumbers: updateRaffle.quantityNumbers,
                 ticketPrice: updateRaffle.ticketPrice,
             }
         });
-    
+
         return responseEdit;
     }
 
