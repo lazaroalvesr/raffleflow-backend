@@ -232,9 +232,7 @@ export class AuthService {
 
     async searchUser(filters: SearchUserDTO) {
         const whereConditions = {
-            ...(filters.name && { name: { contains: filters.name, mode: 'insensitive' as 'insensitive' } }),
             ...(filters.email && { email: { contains: filters.email, mode: 'insensitive' as 'insensitive' } }),
-            ...(filters.telephone && { telephone: { contains: filters.telephone, mode: 'insensitive' as 'insensitive' } }),
         };
 
         return this.prismaService.user.findMany({
