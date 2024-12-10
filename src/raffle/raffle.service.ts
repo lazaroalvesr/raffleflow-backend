@@ -63,7 +63,6 @@ export class RaffleService {
             .from('raffle-img')
             .upload(`raffle/${uniqueFileName}`, profileImage.buffer, {
                 contentType: profileImage.mimetype,
-                upsert: false,
             });
 
         if (uploadError) {
