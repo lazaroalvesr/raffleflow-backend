@@ -61,9 +61,9 @@ export class RaffleService {
         const { data: uploadData, error: uploadError } = await supabase
             .storage
             .from('raffle-img')
-            .upload(`raffle//${uniqueFileName}`, profileImage.buffer, {
+            .upload(`raffle/${uniqueFileName}`, profileImage.buffer, {
                 contentType: profileImage.mimetype,
-                upsert: true,
+                upsert: false,
             });
 
         if (uploadError) {
@@ -213,7 +213,6 @@ export class RaffleService {
             user: winnerUser,
         };
     }
-
 
     async updateRaffle(id: string, image: Express.Multer.File, updateRaffle: {
         name?: string,
