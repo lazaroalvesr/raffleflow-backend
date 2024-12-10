@@ -2,8 +2,11 @@
 FROM node:20-alpine AS builder
 
 # Instala dependências necessárias para construir o projeto
-RUN apk add --no-cache python3 build-base postgresql-client
-
+RUN apk add --no-cache python3 build-base postgresql-client \
+    openssl1.1-compat \
+    libssl1.1 \
+    ca-certificates
+    
 WORKDIR /app
 
 # Copia pacotes e arquivos do Prisma
