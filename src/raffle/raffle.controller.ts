@@ -47,7 +47,6 @@ export class RaffleController {
         return { message: 'Winner drawn successfully', winnerTicket };
     }
     
-    
     @Patch("update/:id")
     @UseInterceptors(FileInterceptor('image')) 
     async updatedRaffle(

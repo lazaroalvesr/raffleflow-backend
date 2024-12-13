@@ -93,6 +93,7 @@ export class RaffleService {
                 image: true,
                 quantityNumbers: true,
                 endDate: true,
+                winnerTicketId: true,
                 AvailableTicket: {
                     where: {
                         isReserved: false,
@@ -195,7 +196,8 @@ export class RaffleService {
             where: { id: winnerTicket.userId },
             select: {
                 name: true,
-                email: true
+                email: true,
+                telephone: true
             }
         });
 
@@ -213,7 +215,6 @@ export class RaffleService {
             user: winnerUser,
         };
     }
-
 
     async updateRaffle(id: string, image: Express.Multer.File, updateRaffle: {
         name?: string,
