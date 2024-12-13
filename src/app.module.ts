@@ -11,8 +11,6 @@ import { RaffleModule } from './raffle/raffle.module';
 import { TicketModule } from './ticket/ticket.module';
 import { WebHookModule } from './web-hook/web-hook.module';
 import { ScheduleModule } from '@nestjs/schedule';
-import { HeartbeatService } from './heartbeat/heartbeat.service';
-import { HeartbeatModule } from './heartbeat/heartbeat.module';
 
 @Module({
   imports: [
@@ -22,7 +20,6 @@ import { HeartbeatModule } from './heartbeat/heartbeat.module';
     PaymentModule,
     RaffleModule,
     TicketModule,
-    HeartbeatModule,
     WebHookModule,
     ScheduleModule.forRoot(),
     ConfigModule.forRoot({
@@ -30,12 +27,10 @@ import { HeartbeatModule } from './heartbeat/heartbeat.module';
     })
   ],
   controllers: [],
-  providers: [
-    HeartbeatService,
-    {
-      provide: APP_GUARD,
-      useClass: JwtAuthGuard
-    }],
+  providers: [{
+    provide: APP_GUARD,
+    useClass: JwtAuthGuard
+  }],
 })
 
 export class AppModule { }
