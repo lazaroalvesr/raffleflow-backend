@@ -95,9 +95,6 @@ export class RaffleService {
                 endDate: true,
                 winnerTicketId: true,
                 AvailableTicket: {
-                    select: {
-                        id: true, 
-                    },
                     where: {
                         isReserved: false,
                         isPurchased: false,
@@ -105,17 +102,19 @@ export class RaffleService {
                 },
             },
         });
-    
+
+        console.log("WinnerTicket: " + raffle.winnerTicketId)
+
         if (!raffle) {
             throw new Error('Raffle not found');
         }
-    
+
         return {
             raffle,
             availableTickets: raffle.AvailableTicket.length,
         };
     }
-    
+
 
     async getInfoPaymentRaffle(id: string) {
         const raffleInfo = await this.prismaService.raffle.findFirst({
