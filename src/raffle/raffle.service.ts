@@ -103,8 +103,6 @@ export class RaffleService {
             },
         });
 
-        console.log("WinnerTicket: " + raffle.winnerTicketId)
-
         if (!raffle) {
             throw new Error('Raffle not found');
         }
@@ -149,7 +147,7 @@ export class RaffleService {
         return paymentInfo;
     }
 
-    async getByUserId(userId: string) {
+    async getRaffleByUserId(userId: string) {
         const raffles = await this.prismaService.raffle.findMany({
             where: { userId },
             select: {
@@ -157,6 +155,7 @@ export class RaffleService {
                 name: true,
                 endDate: true,
                 quantityNumbers: true,
+                winnerTicketId: true,
                 ticketPrice: true,
                 AvailableTicket: {
                     where: {
@@ -172,6 +171,7 @@ export class RaffleService {
             name: raffle.name,
             endDate: raffle.endDate,
             ticketPrice: raffle.ticketPrice,
+            winnerTicketId: raffle.winnerTicketId,
             availableTickets: raffle.AvailableTicket.length || 0,
             quantityNumbers: raffle.quantityNumbers
         }));

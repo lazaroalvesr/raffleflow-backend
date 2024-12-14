@@ -63,13 +63,6 @@ export class AuthController {
         return await this.authService.updateUser(id, updateUser)
     }
 
-    // @Get("usersAll")
-    // @UseGuards(AdminGuard)
-    // @UsePipes(new ValidationPipe({ transform: true }))
-    // async usersAll(@Query() filters: SearchUserDTO) {
-    //     return await this.authService.usersAll(filters);
-    // }
-
     @Get("usersAll")
     @UseGuards(AdminGuard)
     @UsePipes(new ValidationPipe({ transform: true }))
