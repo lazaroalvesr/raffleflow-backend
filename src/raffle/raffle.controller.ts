@@ -30,8 +30,8 @@ export class RaffleController {
 
     @Get("getByUserId/:userId")
     @UseGuards(AdminGuard)
-    async getByUserId(@Param("userId") userId: string) {
-        return await this.raffleService.getByUserId(userId)
+    async getRaffleByUserId(@Param("userId") userId: string) {
+        return await this.raffleService.getRaffleByUserId(userId)
     }
 
     @Get("getInfoPaymentRaffle/:id")
