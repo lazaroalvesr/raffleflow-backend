@@ -156,6 +156,11 @@ export class RaffleService {
                 endDate: true,
                 quantityNumbers: true,
                 winnerTicketId: true,
+                winnerTicket: {
+                    include: {
+                        user: true,
+                    }
+                },
                 ticketPrice: true,
                 AvailableTicket: {
                     where: {
@@ -172,6 +177,13 @@ export class RaffleService {
             endDate: raffle.endDate,
             ticketPrice: raffle.ticketPrice,
             winnerTicketId: raffle.winnerTicketId,
+            winner: raffle.winnerTicket
+                ? {
+                    name: raffle.winnerTicket.user.name,
+                    telephone: raffle.winnerTicket.user.telephone,
+                    email: raffle.winnerTicket.user.email,
+                }
+                : null,
             availableTickets: raffle.AvailableTicket.length || 0,
             quantityNumbers: raffle.quantityNumbers
         }));
