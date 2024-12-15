@@ -95,18 +95,17 @@ export class RaffleService {
                 endDate: true,
                 winnerTicketId: true,
                 winnerTicket: {
-                    include: {
-                        user: {
-                            select: {
+                    select:{
+                        number: true,
+                        user:{
+                            select:{
                                 name: true,
                                 email: true,
                                 telephone: true
                             }
                         }
-                    },
-                    select: {
-                        number: true
                     }
+                   
                 },
                 AvailableTicket: {
                     where: {
