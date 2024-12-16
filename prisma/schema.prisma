@@ -34,13 +34,14 @@ model Raffle {
   quantityNumbers String
   ticketPrice     String
   userId          String
-  drawDate        DateTime?
+  drawDate        DrawRaffle?       @relation(fields: [drawRaffleId], references: [id])
   winnerTicketId  String?
   AvailableTicket AvailableTicket[]
   Payment         Payment[]
   user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
   winnerTicket    Ticket?           @relation("RaffleWinner", fields: [winnerTicketId], references: [id])
   tickets         Ticket[]          @relation("RaffleTickets")
+  drawRaffleId    String?
 }
 
 model AvailableTicket {
@@ -53,6 +54,12 @@ model AvailableTicket {
   raffle        Raffle    @relation(fields: [raffleId], references: [id], onDelete: Cascade)
 
   @@unique([raffleId, ticketNumber])
+}
+
+model DrawRaffle {
+  id     String   @id @default(uuid())
+  date   DateTime
+  Raffle Raffle[]
 }
 
 model Ticket {
