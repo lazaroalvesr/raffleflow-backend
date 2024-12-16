@@ -198,20 +198,20 @@ export class RaffleService {
             where: { id: raffleId },
             include: { tickets: true },
         });
-
+    
         if (!raffle) {
             throw new NotFoundException('Sorteio não encontrado.');
         }
-
+    
         const purchasedTickets = raffle.tickets;
-
+    
         if (purchasedTickets.length === 0) {
             throw new BadRequestException('Nenhum bilhete comprado para este sorteio.');
         }
-
+    
         const winnerIndex = crypto.randomInt(0, purchasedTickets.length);
         const winnerTicket = purchasedTickets[winnerIndex];
-
+    
         const winnerUser = await this.prismaService.user.findUnique({
             where: { id: winnerTicket.userId },
             select: {
@@ -220,21 +220,21 @@ export class RaffleService {
                 telephone: true
             }
         });
-
+    
         if (!winnerUser) {
             throw new NotFoundException('Usuário não encontrado.');
         }
-
+    
         const drawDate = new Date();
-
+    
         await this.prismaService.raffle.update({
             where: { id: raffleId },
             data: {
                 winnerTicketId: winnerTicket.id,
-                drawDate: drawDate ? new Date(drawDate) : null
+                drawDate: drawDate // Remova o new Date() redundante
             },
         });
-
+    
         return {
             winnerTicket,
             user: winnerUser,
