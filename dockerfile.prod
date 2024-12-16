@@ -12,16 +12,14 @@ RUN apk add --no-cache \
 WORKDIR /app
 
 # Copia os arquivos de pacotes e Prisma para instalação das dependências
-COPY package*.json ./ 
+COPY package*.json ./
+COPY prisma ./prisma
 
 # Instala as dependências do projeto
-RUN npm ci
+RUN npm ci && npx prisma generate
 
 # Copia o restante do código-fonte
 COPY . .
-
-# Gera o Prisma client
-RUN npx prisma generate
 
 # Gera a build do projeto para produção
 RUN npm run build
@@ -37,15 +35,12 @@ RUN apk add --no-cache \
     openssl
 
 WORKDIR /app
-
 ENV NODE_ENV=production
 
 # Copia os artefatos da etapa de build
-COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/.env* ./
-COPY --from=builder /app/wait-for-db.sh ./
-
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
+COPY wait-for-db.sh ./
 
 # Dá permissão de execução ao script
 RUN chmod +x ./wait-for-db.sh
