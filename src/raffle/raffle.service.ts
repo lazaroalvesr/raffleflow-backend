@@ -2,6 +2,7 @@ import { Injectable, BadRequestException, NotFoundException } from '@nestjs/comm
 import { CreateRaffleDTO } from '../dto/raffle/CreateDTO';
 import { PrismaService } from '../prisma/prisma.service';
 import { supabase } from '../supabaseClient';
+import * as crypto from 'node:crypto'
 
 @Injectable()
 export class RaffleService {
@@ -193,11 +194,10 @@ export class RaffleService {
     }
 
     async drawWinner(raffleId: string) {
+        // Additional logging or monitoring could be added here
         const raffle = await this.prismaService.raffle.findUnique({
             where: { id: raffleId },
-            include: {
-                tickets: true,
-            },
+            include: { tickets: true },
         });
 
         if (!raffle) {
@@ -210,7 +210,8 @@ export class RaffleService {
             throw new BadRequestException('Nenhum bilhete comprado para este sorteio.');
         }
 
-        const winnerTicket = purchasedTickets[Math.floor(Math.random() * purchasedTickets.length)];
+        const winnerIndex = crypto.randomInt(0, purchasedTickets.length);
+        const winnerTicket = purchasedTickets[winnerIndex];
 
         const winnerUser = await this.prismaService.user.findUnique({
             where: { id: winnerTicket.userId },
@@ -225,8 +226,7 @@ export class RaffleService {
             throw new NotFoundException('Usuário não encontrado.');
         }
 
-        const drawDate = new Date()
-
+        const drawDate = new Date();
         await this.prismaService.raffle.update({
             where: { id: raffleId },
             data: {

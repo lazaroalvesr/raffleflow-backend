@@ -4,7 +4,7 @@ services:
   app:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: dockerfile.dev
     container_name: rifaflow-dev
     ports:
       - "3035:3035"
