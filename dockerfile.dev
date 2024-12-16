@@ -1,0 +1,55 @@
+# Etapa de Build (Desenvolvimento)
+FROM node:20-alpine AS builder
+
+# Instala dependências necessárias para construir o projeto
+RUN apk add --no-cache \
+    python3 \
+    build-base \
+    postgresql-client \
+    openssl \
+    ca-certificates
+
+WORKDIR /app
+
+# Copia os arquivos de pacotes e Prisma para instalação das dependências
+COPY package*.json ./ 
+COPY prisma ./prisma
+
+# Instala as dependências de desenvolvimento
+RUN npm install
+
+# Copia o restante do código-fonte
+COPY . .
+
+# Gera os arquivos do Prisma, se necessário
+RUN npx prisma generate
+
+# Etapa Final para Desenvolvimento
+FROM node:20-alpine
+
+# Instala dependências necessárias para execução e ferramentas de desenvolvimento
+RUN apk add --no-cache \
+    libstdc++ \
+    libgcc \
+    postgresql-client \
+    openssl \
+    bash \
+    && npm install -g ts-node
+
+WORKDIR /app
+
+# Copia os artefatos da etapa de build
+COPY --from=builder /app /app
+
+# Copia o arquivo .env e o script de espera para o banco de dados
+COPY .env* ./ 
+COPY wait-for-db.sh ./
+
+# Dá permissão de execução ao script
+RUN chmod +x ./wait-for-db.sh
+
+# Expose a porta para a aplicação
+EXPOSE 3026
+
+# Comando de inicialização para desenvolvimento
+CMD ["sh", "-c", "./wait-for-db.sh && npx prisma generate && npm run start:dev"]
