@@ -18,6 +18,10 @@ COPY prisma ./prisma
 # Instala as dependências do projeto
 RUN npm ci && npx prisma generate
 
+RUN npx prisma generate
+RUN ls -l node_modules/.prisma/client
+RUN cat node_modules/.prisma/client/index.d.ts | grep drawDate
+
 # Copia o restante do código-fonte
 COPY . .
 
