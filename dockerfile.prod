@@ -35,12 +35,14 @@ RUN apk add --no-cache \
     openssl
 
 WORKDIR /app
+
 ENV NODE_ENV=production
 
 # Copia os artefatos da etapa de build
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
-COPY wait-for-db.sh ./
+COPY --from=builder /app/.env* ./
+COPY --from=builder /app/wait-for-db.sh ./
 
 # Dá permissão de execução ao script
 RUN chmod +x ./wait-for-db.sh
