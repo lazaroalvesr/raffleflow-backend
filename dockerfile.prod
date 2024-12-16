@@ -24,6 +24,7 @@ COPY . .
 # Gera a build do projeto para produção
 RUN npm run build
 
+
 # Etapa Final para Produção
 FROM node:20-alpine
 
@@ -36,12 +37,11 @@ RUN apk add --no-cache \
 
 WORKDIR /app
 
-ENV NODE_ENV=production
-
 # Copia os artefatos da etapa de build
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/.env* ./
+COPY --from=builder prisma ./prisma
 COPY --from=builder /app/wait-for-db.sh ./
 
 # Dá permissão de execução ao script
