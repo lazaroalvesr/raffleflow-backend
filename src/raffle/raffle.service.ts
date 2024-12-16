@@ -194,7 +194,6 @@ export class RaffleService {
     }
 
     async drawWinner(raffleId: string) {
-        // Additional logging or monitoring could be added here
         const raffle = await this.prismaService.raffle.findUnique({
             where: { id: raffleId },
             include: { tickets: true },
@@ -227,11 +226,12 @@ export class RaffleService {
         }
 
         const drawDate = new Date();
+
         await this.prismaService.raffle.update({
             where: { id: raffleId },
             data: {
                 winnerTicketId: winnerTicket.id,
-                drawDate: drawDate
+                drawDate: drawDate ? new Date(drawDate) : null
             },
         });
 
