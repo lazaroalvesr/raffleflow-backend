@@ -12,11 +12,11 @@ RUN apk add --no-cache \
 WORKDIR /app
 
 # Copia os arquivos de pacotes e Prisma para instalação das dependências
-COPY package*.json ./
+COPY package*.json ./ 
 COPY prisma ./prisma
 
 # Instala as dependências do projeto
-RUN npm ci && npx prisma generate
+RUN npm ci
 
 # Copia o restante do código-fonte
 COPY . .
@@ -40,10 +40,10 @@ ENV NODE_ENV=production
 # Copia os artefatos da etapa de build
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
-COPY package*.json ./
+COPY package*.json ./ 
 COPY prisma ./prisma
-COPY .env* ./
-COPY wait-for-db.sh ./
+COPY .env* ./ 
+COPY wait-for-db.sh ./ 
 
 # Dá permissão de execução ao script
 RUN chmod +x ./wait-for-db.sh
@@ -52,4 +52,4 @@ RUN chmod +x ./wait-for-db.sh
 EXPOSE 3000
 
 # Comando de inicialização para produção
-CMD ["sh", "-c", "./wait-for-db.sh && npx prisma migrate deploy && npm run start:prod"]
+CMD ["sh", "-c", "./wait-for-db.sh && npx prisma migrate deploy && npm run start:dev"]
