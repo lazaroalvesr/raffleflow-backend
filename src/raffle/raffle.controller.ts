@@ -39,28 +39,35 @@ export class RaffleController {
     async getInfoPaymentRaffle(@Param("id") id: string) {
         return await this.raffleService.getInfoPaymentRaffle(id)
     }
-    
+
     @Post("winner/:raffleId")
     @UseGuards(AdminGuard)
     async drawWinner(@Param("raffleId") raffleId: string) {
         const winnerTicket = await this.raffleService.drawWinner(raffleId);
-        return { message: 'Winner drawn successfully', winnerTicket };
+        return {
+            message: 'Winner drawn successfully',
+            winner: {
+                ticket: winnerTicket.winnerTicket,
+                user: winnerTicket.user,
+                drawDate: winnerTicket.drawDate
+            }
+        };
     }
-    
+
     @Patch("update/:id")
-    @UseInterceptors(FileInterceptor('image')) 
+    @UseInterceptors(FileInterceptor('image'))
     async updatedRaffle(
         @Param("id") id: string,
-        @Body() updateRaffle: { 
-            name?: string, 
-            description?: string, 
-            endDate?: Date, 
-            quantityNumbers: string, 
-            ticketPrice: string 
+        @Body() updateRaffle: {
+            name?: string,
+            description?: string,
+            endDate?: Date,
+            quantityNumbers: string,
+            ticketPrice: string
         },
         @UploadedFile() image: Express.Multer.File
     ) {
-        return await this.raffleService.updateRaffle(id, image, updateRaffle); 
+        return await this.raffleService.updateRaffle(id, image, updateRaffle);
     }
 
     @Delete("delete/:id")
