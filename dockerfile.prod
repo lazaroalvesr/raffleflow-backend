@@ -40,7 +40,7 @@ WORKDIR /app
 # Copia os artefatos da etapa de build
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/.env* ./
+COPY --from=builder /app/.env ./
 COPY --from=builder prisma ./prisma
 COPY --from=builder /app/wait-for-db.sh ./
 
