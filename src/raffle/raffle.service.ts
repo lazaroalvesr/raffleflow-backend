@@ -95,17 +95,17 @@ export class RaffleService {
                 endDate: true,
                 winnerTicketId: true,
                 winnerTicket: {
-                    select:{
+                    select: {
                         number: true,
-                        user:{
-                            select:{
+                        user: {
+                            select: {
                                 name: true,
                                 email: true,
                                 telephone: true
                             }
                         }
                     }
-                   
+
                 },
                 AvailableTicket: {
                     where: {
@@ -225,14 +225,20 @@ export class RaffleService {
             throw new NotFoundException('Usuário não encontrado.');
         }
 
+        const drawDate = new Date()
+
         await this.prismaService.raffle.update({
             where: { id: raffleId },
-            data: { winnerTicketId: winnerTicket.id },
+            data: {
+                winnerTicketId: winnerTicket.id,
+                drawDate: drawDate
+            },
         });
 
         return {
             winnerTicket,
             user: winnerUser,
+            drawDate
         };
     }
 
