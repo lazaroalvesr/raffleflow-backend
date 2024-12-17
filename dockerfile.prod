@@ -34,7 +34,10 @@ FROM node:20-alpine
 RUN apk add --no-cache \
     libstdc++ \
     libgcc \
+    postgresql-client \
     openssl \
+    bash 
+
 
 WORKDIR /app
 
