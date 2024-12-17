@@ -231,7 +231,7 @@ export class RaffleService {
             where: { id: raffleId },
             data: {
                 winnerTicketId: winnerTicket.id,
-                drawDate: drawDate // Remova o new Date() redundante
+                drawDate: drawDate || null, 
             },
         });
     
