@@ -33,8 +33,7 @@ RUN apk add --no-cache \
     libgcc \
     postgresql-client \
     openssl \
-    bash \
-    && npm install -g ts-node
+    bash 
 
 WORKDIR /app
 

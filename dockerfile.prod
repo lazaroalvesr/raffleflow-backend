@@ -12,22 +12,20 @@ RUN apk add --no-cache \
 WORKDIR /app
 
 # Copia os arquivos de pacotes e Prisma para instalação das dependências
-COPY package*.json ./
+COPY package*.json ./ 
 COPY prisma ./prisma
 
-# Instala as dependências do projeto
-RUN npm ci && npx prisma generate
+# Instala as dependências do projeto (modo produção)
+RUN npm ci
 
+# Gera os arquivos do Prisma
 RUN npx prisma generate
-RUN ls -l node_modules/.prisma/client
-RUN cat node_modules/.prisma/client/index.d.ts | grep drawDate
 
 # Copia o restante do código-fonte
 COPY . .
 
 # Gera a build do projeto para produção
 RUN npm run build
-
 
 # Etapa Final para Produção
 FROM node:20-alpine
@@ -36,7 +34,6 @@ FROM node:20-alpine
 RUN apk add --no-cache \
     libstdc++ \
     libgcc \
-    postgresql-client \
     openssl
 
 WORKDIR /app
@@ -44,9 +41,9 @@ WORKDIR /app
 # Copia os artefatos da etapa de build
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/.env ./
+COPY --from=builder /app/.env ./ 
 COPY --from=builder prisma ./prisma
-COPY --from=builder /app/wait-for-db.sh ./
+COPY --from=builder /app/wait-for-db.sh ./ 
 
 # Dá permissão de execução ao script
 RUN chmod +x ./wait-for-db.sh
