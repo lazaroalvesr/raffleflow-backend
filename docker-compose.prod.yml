@@ -29,7 +29,7 @@ services:
     networks:
       - rifaflow-network
     ports:
-      - "5434:5432"
+      - "5434:5434"
 networks:
   rifaflow-network:
     driver: bridge
