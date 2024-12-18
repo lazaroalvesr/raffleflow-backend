@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
@@ -11,7 +11,6 @@ import { RaffleModule } from './raffle/raffle.module';
 import { TicketModule } from './ticket/ticket.module';
 import { WebHookModule } from './web-hook/web-hook.module';
 import { ScheduleModule } from '@nestjs/schedule';
-import { BlockScriptsMiddleware } from './lib/block-scripts.middleware';
 
 @Module({
   imports: [
@@ -34,9 +33,4 @@ import { BlockScriptsMiddleware } from './lib/block-scripts.middleware';
   }],
 })
 
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    // Bloqueia apenas rotas que começam com /scripts
-    consumer.apply(BlockScriptsMiddleware).forRoutes('/scripts*');
-  }
-}
+export class AppModule { }
