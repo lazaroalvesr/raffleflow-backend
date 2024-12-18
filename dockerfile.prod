@@ -7,30 +7,36 @@ RUN apk add --no-cache \
     build-base \
     postgresql-client \
     openssl \
-    ca-certificates  
+    ca-certificates    
 
 WORKDIR /app  
 
 # Copia os arquivos de pacotes e Prisma para instalação das dependências 
-COPY package*.json ./  
+COPY package*.json ./
 COPY prisma ./prisma  
 
-# Instala as dependências do projeto (modo produção) 
+# Copia os arquivos de configuração 
+COPY tsconfig*.json ./  
+
+# Copia os templates de email 
+COPY templates ./templates
+
+# Instala as dependências do projeto (modo produção)  
 RUN npm ci  
 
-# Gera os arquivos do Prisma 
+# Gera os arquivos do Prisma  
 RUN npx prisma generate  
 
-# Copia o restante do código-fonte 
+# Copia o restante do código-fonte  
 COPY . .  
 
-# Gera a build do projeto para produção 
+# Gera a build do projeto para produção  
 RUN npm run build  
 
-# Etapa Final para Produção 
+# Etapa Final para Produção  
 FROM node:20-alpine  
 
-# Instala dependências necessárias para execução 
+# Instala dependências necessárias para execução  
 RUN apk add --no-cache \
     libstdc++ \
     libgcc \
@@ -40,21 +46,22 @@ RUN apk add --no-cache \
 
 WORKDIR /app  
 
-# Copia os artefatos da etapa de build 
+# Copia os artefatos da etapa de build  
 COPY --from=builder /app/dist ./dist 
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/prisma ./prisma 
 COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/templates ./templates 
 
-# Se tiver um script de wait for db, adicione
-COPY --from=builder /app/wait-for-db.sh ./   
+# Se tiver um script de wait for db, adicione 
+COPY --from=builder /app/wait-for-db.sh ./    
 RUN chmod +x ./wait-for-db.sh  
 
-# Define variáveis de ambiente 
-ENV NODE_ENV=production
+# Define variáveis de ambiente  
+ENV NODE_ENV=production  
 
-# Define a porta exposta 
+# Define a porta exposta  
 EXPOSE 3000  
 
-# Comando de inicialização para produção 
+# Comando de inicialização para produção  
 CMD ["sh", "-c", "./wait-for-db.sh && npx prisma migrate deploy && npm run start:prod"]
