@@ -1,58 +1,60 @@
-# Etapa de Build
-FROM node:20-alpine AS builder
+# Etapa de Build 
+FROM node:20-alpine AS builder  
 
-# Instala dependências necessárias para construir o projeto
+# Instala dependências necessárias para construir o projeto 
 RUN apk add --no-cache \
     python3 \
     build-base \
     postgresql-client \
     openssl \
-    ca-certificates
+    ca-certificates  
 
-WORKDIR /app
+WORKDIR /app  
 
-# Copia os arquivos de pacotes e Prisma para instalação das dependências
-COPY package*.json ./ 
-COPY prisma ./prisma
+# Copia os arquivos de pacotes e Prisma para instalação das dependências 
+COPY package*.json ./  
+COPY prisma ./prisma  
 
-# Instala as dependências do projeto (modo produção)
-RUN npm ci
+# Instala as dependências do projeto (modo produção) 
+RUN npm ci  
 
-# Gera os arquivos do Prisma
-RUN npx prisma generate
+# Gera os arquivos do Prisma 
+RUN npx prisma generate  
 
-# Copia o restante do código-fonte
-COPY . .
+# Copia o restante do código-fonte 
+COPY . .  
 
-# Gera a build do projeto para produção
-RUN npm run build
+# Gera a build do projeto para produção 
+RUN npm run build  
 
-# Etapa Final para Produção
-FROM node:20-alpine
+# Etapa Final para Produção 
+FROM node:20-alpine  
 
-# Instala dependências necessárias para execução
+# Instala dependências necessárias para execução 
 RUN apk add --no-cache \
     libstdc++ \
     libgcc \
     postgresql-client \
     openssl \
-    bash 
+    bash    
 
+WORKDIR /app  
 
-WORKDIR /app
-
-# Copia os artefatos da etapa de build
-COPY --from=builder /app/dist ./dist
+# Copia os artefatos da etapa de build 
+COPY --from=builder /app/dist ./dist 
 COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/.env ./ 
-COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/wait-for-db.sh ./ 
+COPY --from=builder /app/prisma ./prisma 
+COPY --from=builder /app/package*.json ./
 
-# Dá permissão de execução ao script
-RUN chmod +x ./wait-for-db.sh
+# Se tiver um script de wait for db, adicione
+COPY --from=builder /app/wait-for-db.sh ./   
+RUN chmod +x ./wait-for-db.sh  
 
-# Define a porta exposta
-EXPOSE 3000
+# Define variáveis de ambiente 
+ENV NODE_ENV=production
 
-# Comando de inicialização para produção
+# Define a porta exposta 
+EXPOSE 3000  
+
+# Comando de inicialização para produção 
 CMD ["sh", "-c", "./wait-for-db.sh && npx prisma migrate deploy && npm run start:prod"]
