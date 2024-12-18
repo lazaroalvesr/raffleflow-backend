@@ -2,8 +2,13 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 async function updateUserRole() {
-    const userId = '40064cc9-6bc0-4411-bbf8-59505ec575a8'; // Substitua pelo ID do usuário
-    const newRole = 'ADM'; // Nova role
+    const userId = process.argv[2]; 
+    const newRole = process.argv[3];
+
+    if (!userId || !newRole) {
+        console.error('Erro: ID do usuário ou nova role não passados como argumentos');
+        return;
+    }
 
     try {
         const updatedUser = await prisma.user.update({
