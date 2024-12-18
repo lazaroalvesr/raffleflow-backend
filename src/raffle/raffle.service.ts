@@ -96,6 +96,7 @@ export class RaffleService {
                 quantityNumbers: true,
                 endDate: true,
                 winnerTicketId: true,
+                drawDate: true,
                 winnerTicket: {
                     select: {
                         number: true,
