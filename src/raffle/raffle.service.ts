@@ -116,8 +116,8 @@ export class RaffleService {
                         isPurchased: false,
                     },
                 },
-            },
-        });
+            }
+        })
 
         if (!raffle) {
             throw new Error('Raffle not found');
@@ -126,7 +126,7 @@ export class RaffleService {
         return {
             raffle,
             availableTickets: raffle.AvailableTicket.length,
-        };
+        }
     }
 
 
