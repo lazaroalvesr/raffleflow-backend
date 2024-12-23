@@ -251,6 +251,40 @@ export class AuthService {
 
     }
 
+    async raffleticketsWon(userId: string) {
+        if (!userId) {
+            throw new BadRequestException("User not found");
+        }
+
+        const response = await this.prismaService.user.findFirst({
+            where: { id: userId },
+            select: {
+                name: true,
+                surname: true,
+                email: true,
+                tickets:{
+                    include:{
+                        wonRaffles:{
+                            select:{
+                                name: true,
+                                winnerTicket: true,
+                                drawDate: true,
+                                startDate: true,
+                                ticketPrice: true
+                            }
+                        }
+                    }
+                }
+            }
+        })
+
+        if (!response) {
+            throw new NotFoundException("No raffle tickets won found for this user.");
+        }
+
+        return response
+    }
+
     async deleteUser(id: string) {
         await this.prismaService.user.delete({
             where: { id }
