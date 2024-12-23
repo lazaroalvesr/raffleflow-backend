@@ -70,6 +70,11 @@ export class AuthController {
         return this.authService.searchUser(filters);
     }
 
+    @Get("raffle-tickets-won/:userId")
+    async getMyRaffleTicketsWon(@Param("userId") userId: string) {
+        return await this.authService.raffleticketsWon(userId)
+    }
+
     @Delete("delete/:id")
     @UseGuards(JwtAuthGuard)
     async deleteUser(@Param("id") id: string) {

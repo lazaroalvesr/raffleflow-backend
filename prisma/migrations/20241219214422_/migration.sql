@@ -32,8 +32,9 @@ CREATE TABLE "Raffle" (
     "quantityNumbers" TEXT NOT NULL,
     "ticketPrice" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
-    "drawDate" TIMESTAMP(3) NOT NULL,
+    "drawDate" TIMESTAMP(3),
     "winnerTicketId" TEXT,
+    "drawRaffleId" TEXT,
 
     CONSTRAINT "Raffle_pkey" PRIMARY KEY ("id")
 );
