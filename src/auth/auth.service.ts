@@ -231,24 +231,40 @@ export class AuthService {
     }
 
     async searchUser(filters: SearchUserDTO) {
-        const whereConditions = {
-            ...(filters.email && { email: { contains: filters.email, mode: 'insensitive' as 'insensitive' } }),
-        };
+        const whereConditions = filters.email
+            ? {
+                email: {
+                    contains: filters.email,
+                    mode: 'insensitive' as 'insensitive'
+                }
+            } : {}
 
-        return this.prismaService.user.findMany({
-            where: whereConditions,
-            select: {
-                id: true,
-                name: true,
-                surname: true,
-                email: true,
-                telephone: true,
-                role: true,
-                createdAt: true,
-                updatedAt: true
+        try {
+            const [totalUsers, fileteredUsers] = await Promise.all([
+                this.prismaService.user.count(),
+                this.prismaService.user.findMany({
+                    where: whereConditions,
+                    select: {
+                        id: true,
+                        name: true,
+                        surname: true,
+                        email: true,
+                        telephone: true,
+                        role: true,
+                        createdAt: true
+                    }
+                })
+            ])
+
+            return {
+                count: totalUsers,
+                user: fileteredUsers
             }
-        });
-
+            
+        } catch (err) {
+            console.error("Erro ao buscar usuários:", err);
+            throw new Error("Erro ao buscar usuários no banco.");
+        }
     }
 
     async raffleticketsWon(userId: string) {
@@ -262,10 +278,10 @@ export class AuthService {
                 name: true,
                 surname: true,
                 email: true,
-                tickets:{
-                    include:{
-                        wonRaffles:{
-                            select:{
+                tickets: {
+                    include: {
+                        wonRaffles: {
+                            select: {
                                 name: true,
                                 winnerTicket: true,
                                 drawDate: true,
