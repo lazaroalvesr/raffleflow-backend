@@ -129,7 +129,6 @@ export class RaffleService {
         }
     }
 
-
     async getInfoPaymentRaffle(id: string) {
         const raffleInfo = await this.prismaService.raffle.findFirst({
             where: { id },
