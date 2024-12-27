@@ -8,6 +8,7 @@ export class PaymentService {
     processPayment() {
         throw new Error('Method not implemented.');
     }
+    
     constructor(
         private prismaService: PrismaService,
         private ticketService: TicketService) { }

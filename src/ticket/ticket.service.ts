@@ -159,6 +159,7 @@ export class TicketService {
 
                     const newPayment = await this.prismaService.payment.create({
                         data: {
+                            userId: body.userId as string,
                             transactionId: String(paymentResponse.id),
                             amount: priceTotal,
                             paymentMethod: 'pix',
@@ -168,12 +169,7 @@ export class TicketService {
                             payerEmail: body.email,
                             ticketNumbers: generatedNumbers,
                             pixUrl,
-                            user: {
-                                connect: { id: body.userId }
-                            },
-                            raffle: {
-                                connect: { id: body.raffleId }
-                            }
+                            raffleId: body.raffleId
                         },
                     });
 
