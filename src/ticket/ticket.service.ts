@@ -74,7 +74,7 @@ export class TicketService {
                 prisma,
                 raffleId: string,
                 quantity: number
-            ): Promise<number[]> => {  
+            ): Promise<number[]> => {
                 const availableTickets = await prisma.availableTicket.findMany({
                     where: {
                         raffleId: raffleId,
@@ -85,24 +85,24 @@ export class TicketService {
                         ticketNumber: true,
                     },
                 });
-            
+
                 if (availableTickets.length < quantity) {
                     throw new Error('Não há tickets suficientes disponíveis');
                 }
-            
+
                 const shuffledTickets = availableTickets.map((t: { ticketNumber: any; }) => t.ticketNumber);
                 for (let i = shuffledTickets.length - 1; i > 0; i--) {
                     const j = Math.floor(Math.random() * (i + 1));
                     [shuffledTickets[i], shuffledTickets[j]] = [shuffledTickets[j], shuffledTickets[i]];
                 }
-            
+
                 const selectedTickets = shuffledTickets.slice(0, quantity);
-            
+
                 const formattedTickets = selectedTickets.map((num: number) => {
-                    return parseInt(num < 10 ? `0${num}` : `${num}`);  
+                    return parseInt(num < 10 ? `0${num}` : `${num}`);
                 });
 
-                return formattedTickets; 
+                return formattedTickets;
             };
 
 
@@ -152,23 +152,28 @@ export class TicketService {
                         },
                         requestOptions: { idempotencyKey: uniqueIdempotencyKey },
                     });
-                    console.log(paymentResponse)
 
                     const pixUrl = paymentResponse.point_of_interaction.transaction_data.ticket_url;
                     const qrCode = paymentResponse.point_of_interaction.transaction_data.qr_code_base64;
+                    const pixKey = paymentResponse.point_of_interaction.transaction_data.qr_code;
 
-                    const newPayment = await prisma.payment.create({
+                    const newPayment = await this.prismaService.payment.create({
                         data: {
                             transactionId: String(paymentResponse.id),
-                            userId: body.userId,
-                            raffleId: body.raffleId,
                             amount: priceTotal,
                             paymentMethod: 'pix',
                             qrCode,
+                            pixKey,
                             status: 'pending',
                             payerEmail: body.email,
                             ticketNumbers: generatedNumbers,
                             pixUrl,
+                            user: {
+                                connect: { id: body.userId }
+                            },
+                            raffle: {
+                                connect: { id: body.raffleId }
+                            }
                         },
                     });
 
@@ -248,8 +253,6 @@ export class TicketService {
                     where: { id: paymentId },
                     data: { status: 'approved' }
                 });
-
-                console.log(`Processed payment ${paymentId} with numbers: [${payment.ticketNumbers.join(', ')}]`);
             });
         } catch (error) {
             console.error('Error handling payment approval:', error);

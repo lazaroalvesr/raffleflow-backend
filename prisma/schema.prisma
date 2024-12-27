@@ -34,7 +34,7 @@ model Raffle {
   quantityNumbers String
   ticketPrice     String
   userId          String
-  drawDate        DateTime?       
+  drawDate        DateTime?
   winnerTicketId  String?
   AvailableTicket AvailableTicket[]
   Payment         Payment[]
@@ -76,9 +76,10 @@ model Payment {
   paymentMethod String
   status        PaymentStatus
   pixUrl        String
-  qrCode        String?
-  payerId       String?
-  payerEmail    String?
+  qrCode        String
+  pixKey        String
+  payerId       String
+  payerEmail    String
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
   ticketNumbers Int[]
