@@ -78,7 +78,7 @@ model Payment {
   pixUrl        String
   qrCode        String
   pixKey        String
-  payerId       String
+  payerId       String?
   payerEmail    String
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
