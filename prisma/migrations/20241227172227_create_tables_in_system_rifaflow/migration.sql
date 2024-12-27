@@ -73,6 +73,7 @@ CREATE TABLE "Payment" (
     "status" "PaymentStatus" NOT NULL,
     "pixUrl" TEXT NOT NULL,
     "qrCode" TEXT,
+    "pixKey" TEXT NOT NULL,
     "payerId" TEXT,
     "payerEmail" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,

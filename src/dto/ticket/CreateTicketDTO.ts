@@ -17,6 +17,7 @@ export class CreateTicketDTO extends PartialType(RegisterDTO) {
     @IsNotEmpty()
     @IsNumber()
     quantity: number;
-
+    
+    @IsNumber()
     number: number
 }
