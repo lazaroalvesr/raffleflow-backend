@@ -15,9 +15,7 @@ export class CreateTicketDTO extends PartialType(RegisterDTO) {
     raffleId: string;
 
     @IsNotEmpty()
-    @IsNumber()
     quantity: number;
     
-    @IsNumber()
     number: number
 }
