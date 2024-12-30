@@ -29,9 +29,9 @@ jobs:
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.SSH_KEY }}
         script: |
-          docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/raffle-back:latest
+          docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/alvesr23/raffle-back:latest
           docker stop raffle-back || true
           docker rm raffle-back || true
           docker run -d --rm --name raffle-back -p 3000:3000 \
             -e DATABASE_URL=${{ secrets.DATABASE_URL }} \
-            ${{ secrets.DOCKER_HUB_USERNAME }}/raffle-back:latest
+            ${{ secrets.DOCKER_HUB_USERNAME }}/alvesr23/raffle-back:latest
