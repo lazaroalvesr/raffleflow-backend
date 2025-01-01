@@ -42,3 +42,4 @@ jobs:
             -e SUPABASE_KEY=${{ secrets.SUPABASE_KEY }} \
             alvesr23/raffle-back:latest
           docker ps
+          
