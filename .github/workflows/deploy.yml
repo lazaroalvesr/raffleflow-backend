@@ -40,6 +40,7 @@ jobs:
             -e DATABASE_URL=${{ secrets.DATABASE_URL }} \
             -e SUPABASE_URL=${{ secrets.SUPABASE_URL }} \
             -e SUPABASE_KEY=${{ secrets.SUPABASE_KEY }} \
-            -e SUPABASE_KEY=${{ secrets.SECRET }} \
+            -e SECRET=${{ secrets.SECRET }} \
+            -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
             alvesr23/raffle-back:latest
           docker ps
