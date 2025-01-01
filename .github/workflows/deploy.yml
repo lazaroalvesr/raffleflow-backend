@@ -33,18 +33,12 @@ jobs:
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.SSH_KEY }}
         script: |
-          # Copiar o arquivo .env para a VPS
-          echo "${{ secrets.ENV_FILE }}" > /app/.env
-          
-          # Garantir que o container antigo seja removido
           docker pull alvesr23/raffle-back:latest
           docker stop raffle-back || true
           docker rm raffle-back || true
-
-          # Rodar o container com as variáveis do arquivo .env
           docker run -d --name raffle-back -p 3026:3000 \
-            --env-file /app/.env \
+            -e DATABASE_URL=${{ secrets.DATABASE_URL }} \
+            -e SUPABASE_URL=${{ secrets.SUPABASE_URL }} \
+            -e SUPABASE_KEY=${{ secrets.SUPABASE_KEY }} \
             alvesr23/raffle-back:latest
-
-          # Listar os containers ativos
           docker ps
