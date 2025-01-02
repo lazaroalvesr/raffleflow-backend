@@ -33,9 +33,17 @@ jobs:
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.SSH_KEY }}
         script: |
+          # Certifique-se de que a rede exista. Caso contrário, crie-a.
+          docker network create raffle-network || true
+
+          # Baixar a imagem mais recente
           docker pull alvesr23/raffle-back:latest
+
+          # Parar e remover o container anterior
           docker stop raffle-back || true
           docker rm raffle-back || true
+
+          # Executar o novo container na rede especificada
           docker run -d --name raffle-back --network raffle-network -p 3026:3000 \
             -e DATABASE_URL=${{ secrets.DATABASE_URL }} \
             -e SUPABASE_URL=${{ secrets.SUPABASE_URL }} \
@@ -43,4 +51,6 @@ jobs:
             -e SECRET=${{ secrets.SECRET }} \
             -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
             alvesr23/raffle-back:latest
+
+          # Verificar se o container foi iniciado corretamente
           docker ps
