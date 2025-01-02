@@ -11,6 +11,7 @@ import { RaffleModule } from './raffle/raffle.module';
 import { TicketModule } from './ticket/ticket.module';
 import { WebHookModule } from './web-hook/web-hook.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { ThrottlerModule } from '@nestjs/throttler'
 
 @Module({
   imports: [
@@ -24,7 +25,11 @@ import { ScheduleModule } from '@nestjs/schedule';
     ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal: true
-    })
+    }),
+    ThrottlerModule.forRoot([{
+      ttl: 60,
+      limit: 10,
+    }]),
   ],
   controllers: [],
   providers: [{
