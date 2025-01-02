@@ -36,7 +36,7 @@ jobs:
           docker pull alvesr23/raffle-back:latest
           docker stop raffle-back || true
           docker rm raffle-back || true
-          docker run -d --name raffle-back -p 3026:3000 \
+          docker run -d --name raffle-back --network raffle-network -p 3026:3000 \
             -e DATABASE_URL=${{ secrets.DATABASE_URL }} \
             -e SUPABASE_URL=${{ secrets.SUPABASE_URL }} \
             -e SUPABASE_KEY=${{ secrets.SUPABASE_KEY }} \
