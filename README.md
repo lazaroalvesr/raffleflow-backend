@@ -1,5 +1,5 @@
 
-# Sistema de Rifas - Backend 
+# Rifaflow - Sistema Backend 
 
 Este backend foi desenvolvido para gerenciar a venda de rifas, o cadastro de participantes, a geração automática de bilhetes e a integração com o sistema de pagamentos Mercado Pago, utilizando o PIX.
 
