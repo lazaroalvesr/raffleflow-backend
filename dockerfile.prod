@@ -10,6 +10,9 @@ RUN apk add --no-cache \
 
 WORKDIR /app  
 
+# Adicione um argumento para cache busting
+ARG BUILD_DATE=unknown
+
 # Copie apenas os arquivos essenciais primeiro
 COPY package*.json ./
 COPY prisma ./prisma/
@@ -25,6 +28,9 @@ RUN npm run prisma:generate
 COPY . .
 COPY templates ./templates
 
+# Adicione uma variável de ambiente com o timestamp do build
+ENV BUILD_TIME=${BUILD_DATE}
+
 # Execute o build
 RUN npm run build
 
@@ -39,6 +45,10 @@ RUN apk add --no-cache \
     bash    
 
 WORKDIR /app  
+
+# Copie a variável de ambiente do builder
+ARG BUILD_DATE
+ENV BUILD_TIME=${BUILD_DATE}
 
 # Copie os artefatos necessários
 COPY --from=builder /app/dist ./dist 

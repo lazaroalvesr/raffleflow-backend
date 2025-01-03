@@ -1,30 +1,21 @@
-name: Deploy Raffle-flow-back
-
-on:
-  push:
-    branches:
-      - main
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-
-    - name: Set up Docker
-      uses: docker/setup-buildx-action@v2
-
-    - name: Login to Docker Hub
-      run: echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
+- name: Set build date
+      id: date
+      run: echo "BUILD_DATE=$(date +%s)" >> $GITHUB_OUTPUT
 
     - name: Build and Load Docker Image
       run: |
-        docker buildx build --load -t alvesr23/raffle-back:latest -f dockerfile.prod .
+        docker buildx build \
+          --build-arg BUILD_DATE=${{ steps.date.outputs.BUILD_DATE }} \
+          --no-cache \
+          --load \
+          -t alvesr23/raffle-back:latest \
+          -t alvesr23/raffle-back:${{ steps.date.outputs.BUILD_DATE }} \
+          -f dockerfile.prod .
       
     - name: Push Docker Image  
-      run: docker push alvesr23/raffle-back:latest
+      run: |
+        docker push alvesr23/raffle-back:latest
+        docker push alvesr23/raffle-back:${{ steps.date.outputs.BUILD_DATE }}
         
     - name: Deploy to VPS
       uses: appleboy/ssh-action@v0.1.10
@@ -33,16 +24,30 @@ jobs:
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.SSH_KEY }}
         script: |
-          docker pull alvesr23/raffle-back:latest
+          echo "Pulling new image..."
+          docker pull alvesr23/raffle-back:${{ steps.date.outputs.BUILD_DATE }}
+          
+          echo "Stopping old container..."
           docker stop raffle-back || true
           docker rm raffle-back || true
 
+          echo "Creating network if not exists..."
           docker network create raffle-back_rifaflow-network || true
-          docker run -d --name raffle-back --network raffle-back_rifaflow-network -p 3026:3000 \
-            -e DATABASE_URL=${{ secrets.DATABASE_URL }} \
-            -e SUPABASE_URL=${{ secrets.SUPABASE_URL }} \
-            -e SUPABASE_KEY=${{ secrets.SUPABASE_KEY }} \
-            -e SECRET=${{ secrets.SECRET }} \
-            -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
-            alvesr23/raffle-back:latest
-          docker ps
+          
+          echo "Starting new container..."
+          docker run -d --name raffle-back \
+            --network raffle-back_rifaflow-network \
+            -p 3026:3000 \
+            -e DATABASE_URL="${{ secrets.DATABASE_URL }}" \
+            -e SUPABASE_URL="${{ secrets.SUPABASE_URL }}" \
+            -e SUPABASE_KEY="${{ secrets.SUPABASE_KEY }}" \
+            -e SECRET="${{ secrets.SECRET }}" \
+            -e JWT_SECRET="${{ secrets.JWT_SECRET }}" \
+            --restart unless-stopped \
+            alvesr23/raffle-back:${{ steps.date.outputs.BUILD_DATE }}
+
+          echo "Cleaning up old images..."
+          docker image prune -f
+
+          echo "Verifying deployment..."
+          docker inspect raffle-back | grep BUILD_TIME
