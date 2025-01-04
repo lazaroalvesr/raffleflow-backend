@@ -59,8 +59,8 @@ jobs:
             -e SUPABASE_KEY="${{ secrets.SUPABASE_KEY }}" \
             -e SECRET="${{ secrets.SECRET }}" \
             -e JWT_SECRET="${{ secrets.JWT_SECRET }}" \
-            -e MP_ACCESS_TOKEN="${{ secrets.JWT_SECRET }}" \
-            -e NOTIFICATION_URL="${{ secrets.JWT_SECRET }}" \
+            -e MP_ACCESS_TOKEN="${{ secrets.MP_ACCESS_TOKEN }}" \
+            -e NOTIFICATION_URL="${{ secrets.NOTIFICATION_URL }}" \
             --restart unless-stopped \
             alvesr23/raffle-back:latest
 
