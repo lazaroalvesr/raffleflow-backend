@@ -173,7 +173,16 @@ export class TicketService {
                         },
                     });
 
-                    return { paymentDetails: newPayment, generatedNumbers };
+                    return {
+                        paymentDetails: {
+                            ...newPayment,
+                            qrCode: newPayment.qrCode,
+                            pixKey: newPayment.pixKey,
+                            pixUrl: newPayment.pixUrl,
+                            amount: newPayment.amount
+                        },
+                        generatedNumbers
+                    };
                 });
 
                 return result;
@@ -192,6 +201,7 @@ export class TicketService {
                         });
                     });
                 }
+                throw new Error(`Erro ao processar pagamento: ${error.message}`);
             }
         });
     }
