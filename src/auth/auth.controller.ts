@@ -75,11 +75,6 @@ export class AuthController {
         return await this.authService.raffleticketsWon(userId)
     }
 
-    @Get("raffle-winner/:userId")
-    async getUserWinnerRaffle(@Param("userId") userId: string) {
-        return await this.authService.getUserWinnerRaffle(userId)
-    }
-
     @Delete("delete/:id")
     @UseGuards(JwtAuthGuard)
     async deleteUser(@Param("id") id: string) {
