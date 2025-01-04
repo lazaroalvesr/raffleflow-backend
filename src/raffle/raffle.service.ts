@@ -308,5 +308,4 @@ export class RaffleService {
 
         return response;
     }
-
 }
