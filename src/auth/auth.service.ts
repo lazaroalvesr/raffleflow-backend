@@ -267,35 +267,6 @@ export class AuthService {
         }
     }
 
-    async getUserWinnerRaffle(userId: string) {
-        if (!userId) {
-            throw new BadRequestException("User not found");
-        }
-    
-        const response = await this.prismaService.raffle.findMany({
-            where: { winnerTicketId: userId },
-            include: {
-                winnerTicket: {
-                    select: {
-                        raffle: {
-                            select: {
-                                name: true,
-                                winnerTicket: true,
-                                drawDate: true,
-                            }
-                        },
-                        number: true,
-                    }
-                }
-            }
-        });
-    
-        if (response.length === 0) {
-            throw new NotFoundException("No raffle found for this user.");
-        }
-        return response;
-    }
-
     async raffleticketsWon(userId: string) {
         if (!userId) {
             throw new BadRequestException("User not found");
