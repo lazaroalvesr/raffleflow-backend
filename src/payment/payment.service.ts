@@ -91,7 +91,22 @@ export class PaymentService {
 
     async getAllPaymentInfoAll() {
         try {
-            const response = await this.prismaService.payment.findMany()
+            const response = await this.prismaService.payment.findMany({
+                select: {
+                    raffle: {
+                        select: {
+                            name: true,
+                        },
+                        include: {
+                            tickets: {
+                                select: {
+                                    dateBuy: true
+                                }
+                            }
+                        }
+                    }
+                }
+            })
             return response;
         } catch (e) {
             throw new BadRequestException('Error fetching payment status');
