@@ -110,6 +110,7 @@ export class PaymentService {
                         payerEmail: true,
                         status: true,
                         ticketNumbers: true,
+                        createdAt: true,
                         raffle: {
                             select: {
                                 name: true,
@@ -122,7 +123,7 @@ export class PaymentService {
                                 tickets: {
                                     select: {
                                         number: true,
-                                        dateBuy: true
+                                        dateBuy: true,
                                     }
                                 }
                             }
