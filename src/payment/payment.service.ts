@@ -104,11 +104,24 @@ export class PaymentService {
                 this.prismaService.payment.findMany({
                     where: whereConditions,
                     select: {
+                        id: true,
+                        amount: true,
+                        paymentMethod: true,
+                        payerEmail: true,
+                        status: true,
+                        ticketNumbers: true,
                         raffle: {
                             select: {
                                 name: true,
+                                user: {
+                                    select: {
+                                        name: true,
+                                        telephone: true
+                                    }
+                                },
                                 tickets: {
                                     select: {
+                                        number: true,
                                         dateBuy: true
                                     }
                                 }
