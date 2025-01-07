@@ -2,6 +2,7 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import axios from 'axios';
 import { TicketService } from '../ticket/ticket.service';
+import { SearchUserPaymentDTO } from '../dto/payment/searchUserDTO';
 
 @Injectable()
 export class PaymentService {
@@ -89,27 +90,38 @@ export class PaymentService {
         }
     }
 
-    async getAllPaymentInfoAll() {
+    async getAllPaymentInfoAll(filters: SearchUserPaymentDTO) {
+        const whereConditions = filters.payerEmail
+            ? {
+                payerEmail: {
+                    contains: filters.payerEmail,
+                    mode: 'insensitive' as 'insensitive'
+                }
+            } : {}
+
         try {
-            const response = await this.prismaService.payment.findMany({
-                select: {
-                    raffle: {
-                        select: {
-                            name: true,
-                        },
-                        include: {
-                            tickets: {
-                                select: {
-                                    dateBuy: true
+            return await Promise.all([
+                this.prismaService.payment.findMany({
+                    where: whereConditions,
+                    select: {
+                        raffle: {
+                            select: {
+                                name: true,
+                            },
+                            include: {
+                                tickets: {
+                                    select: {
+                                        dateBuy: true
+                                    }
                                 }
                             }
                         }
                     }
-                }
-            })
-            return response;
-        } catch (e) {
-            throw new BadRequestException('Error fetching payment status');
+                })
+            ])
+        } catch (err) {
+            console.error("Erro ao buscar usuários:", err);
+            throw new Error("Erro ao buscar infos de pagamento.");
         }
     }
 
