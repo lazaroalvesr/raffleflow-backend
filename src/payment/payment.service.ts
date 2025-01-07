@@ -90,7 +90,7 @@ export class PaymentService {
         }
     }
 
-    async getAllPaymentInfoAll(filters: SearchUserPaymentDTO) {
+    async getPaymentInfoAll(filters: SearchUserPaymentDTO) {
         const whereConditions = filters.payerEmail
             ? {
                 payerEmail: {
