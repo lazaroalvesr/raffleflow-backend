@@ -103,12 +103,10 @@ export class PaymentService {
             return await Promise.all([
                 this.prismaService.payment.findMany({
                     where: whereConditions,
-                    include: {
+                    select: {
                         raffle: {
                             select: {
-                                name: true
-                            },
-                            include: {
+                                name: true,
                                 tickets: {
                                     select: {
                                         dateBuy: true
