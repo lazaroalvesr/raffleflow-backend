@@ -6,8 +6,12 @@ export class PaymentController {
     constructor(private paymentService: PaymentService) { }
 
     @Get("getById/:userId")
-    async getAll(@Param("userId") userId: string) {
+    async getByUserId(@Param("userId") userId: string) {
         return await this.paymentService.getById(userId)
     }
 
+    @Get("getPaymentInfoAll")
+    async getPaymentInfo() {
+        return await this.paymentService.getAllPaymentInfoAll()
+    }
 }

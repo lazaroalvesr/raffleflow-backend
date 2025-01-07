@@ -8,7 +8,7 @@ export class PaymentService {
     processPayment() {
         throw new Error('Method not implemented.');
     }
-    
+
     constructor(
         private prismaService: PrismaService,
         private ticketService: TicketService) { }
@@ -86,6 +86,15 @@ export class PaymentService {
             } else {
                 throw new BadRequestException('Error fetching payment status');
             }
+        }
+    }
+
+    async getAllPaymentInfoAll() {
+        try {
+            const response = await this.prismaService.payment.findMany()
+            return response;
+        } catch (e) {
+            throw new BadRequestException('Error fetching payment status');
         }
     }
 
