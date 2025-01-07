@@ -308,5 +308,4 @@ export class AuthService {
 
         return { message: "Usuário deletado com sucesso!" }
     }
-
 }
