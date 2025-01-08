@@ -139,6 +139,7 @@ export class RaffleService {
                         user: {
                             select: {
                                 name: true,
+                                email: true
                             },
                         },
                         status: true,
