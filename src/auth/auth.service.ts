@@ -272,13 +272,16 @@ export class AuthService {
             throw new BadRequestException("User not found");
         }
 
-        const response = await this.prismaService.user.findFirst({
+        const response = await this.prismaService.user.findMany({
             where: { id: userId },
             select: {
                 name: true,
                 surname: true,
                 email: true,
                 tickets: {
+                    where: {
+                        wonRaffles: { some: {} }
+                    },
                     include: {
                         wonRaffles: {
                             select: {
