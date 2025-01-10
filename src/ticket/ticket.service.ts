@@ -238,7 +238,6 @@ export class TicketService {
                             userId: payment.userId,
                             raffleId: payment.raffleId,
                             number: payment.ticketNumbers,
-                            dateBuy: new Date()
                         },
                     });
 
