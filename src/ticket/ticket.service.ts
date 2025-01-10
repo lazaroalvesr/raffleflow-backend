@@ -105,7 +105,6 @@ export class TicketService {
                 return formattedTickets;
             };
 
-
             try {
                 const generatedNumbers = await getRandomAvailableTickets(
                     this.prismaService,
@@ -239,6 +238,7 @@ export class TicketService {
                             userId: payment.userId,
                             raffleId: payment.raffleId,
                             number: payment.ticketNumbers,
+                            dateBuy: new Date()
                         },
                     });
 
